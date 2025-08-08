@@ -77,14 +77,15 @@ export class PostController {
   }
 
   @Put(':id')
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   @ApiUUIDParam('id')
-  @ApiAcceptedResponse()
-  updatePost(
+  @ApiOkResponse({ type: PostDto })
+  async updatePost(
     @UUIDParam('id') id: Uuid,
     @Body() updatePostDto: UpdatePostDto,
-  ): Promise<void> {
-    return this.postService.updatePost(id, updatePostDto);
+  ): Promise<PostDto> {
+    const post = await this.postService.updatePost(id, updatePostDto);
+    return new PostDto(post);
   }
 
   @Delete(':id')
