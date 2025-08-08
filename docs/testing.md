@@ -700,28 +700,61 @@ describe('Authentication (e2e)', () => {
 
 ## Running Tests
 
+### Unit Tests
 ```bash
 # Run all unit tests
-yarn test
+<pm> test
 
 # Run tests in watch mode
-yarn test:watch
+<pm> test:watch
 
-# Run tests with coverage
-yarn test:cov
-
-# Run e2e tests
-yarn test:e2e
+# Run tests with coverage (95% threshold enforced)
+<pm> test:cov
 
 # Run specific test file
-yarn test user.service.spec.ts
+<pm> test user.service.spec.ts
 
 # Run tests with debugging
-yarn test:debug
+<pm> test:debug
 
 # Run tests matching pattern
-yarn test --testNamePattern="should create"
+<pm> test --testNamePattern="should create"
 ```
+
+### Integration Tests  
+```bash
+# Run integration tests specifically
+<pm> test test/integration
+
+# Run integration tests with coverage
+<pm> test:cov test/integration
+```
+
+### End-to-End Tests
+```bash
+# Run e2e tests
+<pm> test:e2e
+
+# Run e2e tests with coverage
+<pm> test:e2e --coverage
+
+# Run specific e2e test
+<pm> test:e2e --testNamePattern="Authentication"
+```
+
+### Coverage Reports
+```bash
+# Generate detailed coverage report
+<pm> test:cov
+
+# View coverage report in browser
+# Open coverage/lcov-report/index.html after running test:cov
+
+# Check coverage threshold (will fail if below 95%)
+<pm> test:cov --coverage
+```
+
+Replace `<pm>` with your package manager (`npm run`, `pnpm`, `yarn`, or `bun run`).
 
 ## Test Database Setup
 
@@ -790,38 +823,85 @@ const mockConfigService = {
 
 ## Test Data Factories
 
-Create reusable test data factories:
+The project includes comprehensive test data factories for all entities and DTOs.
+
+### Available Factories
 
 ```typescript
-// test/factories/user.factory.ts
-import { User } from '../../src/modules/user/types/user.type';
-import { RoleType } from '../../src/constants/role-type';
-
-export class UserFactory {
-  static create(overrides: Partial<User> = {}): User {
-    const user: User = {
-      id: overrides.id || 'test-uuid',
-      firstName: overrides.firstName || 'John',
-      lastName: overrides.lastName || 'Doe',
-      email: overrides.email || 'john.doe@example.com',
-      role: overrides.role || RoleType.USER,
-      password: overrides.password || null,
-      phone: overrides.phone || null,
-      avatar: overrides.avatar || null,
-      createdAt: overrides.createdAt || new Date(),
-      updatedAt: overrides.updatedAt || new Date(),
-    };
-
-    return Object.assign(user, overrides);
-  }
-
-  static createMany(count: number, overrides: Partial<User> = {}): User[] {
-    return Array.from({ length: count }, (_, index) =>
-      this.create({ ...overrides, email: `user${index}@example.com` })
-    );
-  }
-}
+// Import all factories
+import { 
+  UserFactory, 
+  UserSettingsFactory,
+  PostFactory, 
+  PostTranslationFactory,
+  CreatePostDtoFactory,
+  UpdatePostDtoFactory,
+  UserLoginDtoFactory,
+  UserRegisterDtoFactory,
+  TokenPayloadDtoFactory 
+} from '../test/factories/index.ts';
 ```
+
+### User Factories
+
+```typescript
+// Create a basic user
+const user = UserFactory.create();
+
+// Create user with specific properties
+const adminUser = UserFactory.create({
+  role: RoleType.ADMIN,
+  email: 'admin@example.com'
+});
+
+// Create multiple users
+const users = UserFactory.createMany(5);
+
+// Create admin user (convenience method)
+const admin = UserFactory.createAdmin();
+
+// Create user settings
+const settings = UserSettingsFactory.create({
+  userId: user.id,
+  isEmailVerified: true
+});
+```
+
+### Post Factories
+
+```typescript
+// Create a basic post
+const post = PostFactory.create();
+
+// Create post with translations
+const postWithTranslations = PostFactory.createWithTranslations();
+
+// Create multiple posts
+const posts = PostFactory.createMany(10);
+
+// Create post translations
+const translations = PostTranslationFactory.createMany(2);
+```
+
+### DTO Factories
+
+```typescript
+// Authentication DTOs
+const loginDto = UserLoginDtoFactory.create();
+const registerDto = UserRegisterDtoFactory.create();
+const tokenDto = TokenPayloadDtoFactory.create();
+
+// Post DTOs
+const createPostDto = CreatePostDtoFactory.create();
+const updatePostDto = UpdatePostDtoFactory.create();
+```
+
+### Factory Best Practices
+
+1. **Use factories for all test data**: Never create objects manually in tests
+2. **Override only what's needed**: Keep test data minimal and focused
+3. **Use meaningful data**: Factory defaults should make sense in context
+4. **Extend factories for complex scenarios**: Add convenience methods like `createAdmin()`
 
 ## Testing Best Practices
 
@@ -847,9 +927,11 @@ export class UserFactory {
 - Use `expect.assertions()` for async error testing
 
 ### 5. Coverage Goals
-- Aim for high test coverage (>80%)
-- Focus on business logic and critical paths
+- **Target: 95% test coverage** for all code paths
+- Focus on business logic and critical paths  
 - Don't sacrifice test quality for coverage numbers
+- Use coverage reports to identify untested code paths
+- Ensure all API endpoints are covered by E2E tests
 
 ## Continuous Integration
 

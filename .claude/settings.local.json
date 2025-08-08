@@ -11,7 +11,9 @@
       "Bash(yarn start:dev)",
       "Bash(curl:*)",
       "Bash(lsof:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(yarn test)",
+      "Bash(yarn test:e2e)"
     ],
     "deny": []
   }
