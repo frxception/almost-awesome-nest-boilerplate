@@ -2,7 +2,7 @@ import { STATUS_CODES } from 'node:http';
 
 import type { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { Catch, HttpStatus } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import type { Reflector } from '@nestjs/core';
 import type { Response } from 'express';
 
 import { constraintErrors } from './constraint-errors.ts';
@@ -11,7 +11,8 @@ import { constraintErrors } from './constraint-errors.ts';
 export class QueryFailedFilter implements ExceptionFilter {
   constructor(public reflector: Reflector) {}
 
-  catch(exception: any & { constraint?: string }, host: ArgumentsHost) {
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  catch(exception: unknown & { constraint?: string }, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 

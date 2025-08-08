@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
 import type { ThrottlerOptions } from '@nestjs/throttler';
 import parse from 'parse-duration';
 

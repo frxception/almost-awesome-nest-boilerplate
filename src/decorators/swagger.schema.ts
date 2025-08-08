@@ -20,8 +20,11 @@ import type { IApiFile } from '../interfaces/IApiFile.ts';
 const PARAMTYPES_METADATA = 'design:paramtypes';
 
 function reverseObjectKeys(
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   originalObject: Record<string, any>,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 ): Record<string, any> {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const reversedObject: any = {};
   const keys = Object.keys(originalObject).reverse();
 
@@ -35,6 +38,7 @@ function reverseObjectKeys(
 const ROUTE_ARGS_METADATA = '__routeArguments__';
 
 function explore(instance: object, propertyKey: string | symbol) {
+  // biome-ignore lint/style/useConsistentArrayType: <explanation>
   const types: Array<Type<unknown>> = Reflect.getMetadata(
     PARAMTYPES_METADATA,
     instance,
@@ -45,7 +49,7 @@ function explore(instance: object, propertyKey: string | symbol) {
       ROUTE_ARGS_METADATA,
       instance.constructor,
       propertyKey,
-    ) || {};
+    ) ?? {};
 
   const parametersWithType = _.mapValues(
     reverseObjectKeys(routeArgsMetadata),

@@ -18,11 +18,11 @@ import type { IFile } from '../../interfaces/IFile.ts';
 import type { Reference, Uuid } from '../../types.ts';
 import { UserDto } from '../user/dtos/user.dto.ts';
 import type { User } from '../user/types/user.type.ts';
-import { UserService } from '../user/user.service.ts';
-import { AuthService } from './auth.service.ts';
+import type { UserService } from '../user/user.service.ts';
+import type { AuthService } from './auth.service.ts';
 import { LoginPayloadDto } from './dto/login-payload.dto.ts';
-import { UserLoginDto } from './dto/user-login.dto.ts';
-import { UserRegisterDto } from './dto/user-register.dto.ts';
+import type { UserLoginDto } from './dto/user-login.dto.ts';
+import type { UserRegisterDto } from './dto/user-register.dto.ts';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -57,10 +57,7 @@ export class AuthController {
   async userRegister(
     @Body() userRegisterDto: UserRegisterDto,
   ): Promise<UserDto> {
-    const createdUser = await this.userService.createUser(
-      userRegisterDto,
-      undefined,
-    );
+    const createdUser = await this.userService.createUser(userRegisterDto);
 
     return new UserDto(createdUser, {
       isActive: true,
@@ -69,7 +66,10 @@ export class AuthController {
 
   @Post('register/with-avatar')
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: UserDto, description: 'Successfully Registered with Avatar' })
+  @ApiOkResponse({
+    type: UserDto,
+    description: 'Successfully Registered with Avatar',
+  })
   @ApiFile({ name: 'avatar' })
   async userRegisterWithAvatar(
     @Body() userRegisterDto: UserRegisterDto,

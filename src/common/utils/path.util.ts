@@ -8,9 +8,14 @@ export function getCurrentDirname(importMetaUrl?: string): string {
   // For Jest environment, return the mocked directory path
   if (process.env.NODE_ENV === 'test') {
     // Try to get the mocked path from global setup
-    if ((globalThis as any).import?.meta?.dirname) {
-      return (globalThis as any).import.meta.dirname;
+    const globalImportMeta = (
+      globalThis as { import?: { meta?: { dirname?: string } } }
+    ).import?.meta?.dirname;
+
+    if (globalImportMeta) {
+      return globalImportMeta;
     }
+
     // Fallback for Jest environment
     return path.resolve(process.cwd(), 'src');
   }

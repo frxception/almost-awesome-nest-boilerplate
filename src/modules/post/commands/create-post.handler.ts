@@ -1,8 +1,8 @@
 import type { ICommandHandler } from '@nestjs/cqrs';
 import { CommandHandler } from '@nestjs/cqrs';
 
-import { LanguageCode } from '../../../constants/language-code.ts';
-import { DrizzleService } from '../../../database/drizzle.service.ts';
+import type { LanguageCode } from '../../../constants/language-code.ts';
+import type { DrizzleService } from '../../../database/drizzle.service.ts';
 import { posts, postTranslations } from '../../../database/schema/post.ts';
 import type { Post } from '../types/post.type.ts';
 import type { PostTranslation } from '../types/post-translation.type.ts';
@@ -34,7 +34,7 @@ export class CreatePostHandler
       const languageCode = createTranslationDto.languageCode;
       const description = createPostDto.description.find(
         (desc) => desc.languageCode === languageCode,
-      )!.text;
+      )?.text;
 
       const [translationEntity] = await this.drizzleService.database
         .insert(postTranslations)

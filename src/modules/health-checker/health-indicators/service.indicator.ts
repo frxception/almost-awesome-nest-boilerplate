@@ -1,5 +1,5 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import type { ClientProxy } from '@nestjs/microservices';
 import type { HealthIndicatorResult } from '@nestjs/terminus';
 import { HealthCheckError, HealthIndicator } from '@nestjs/terminus';
 import { firstValueFrom } from 'rxjs';
@@ -10,7 +10,7 @@ export class ServiceHealthIndicator extends HealthIndicator {
   constructor(
     @Optional()
     @Inject('NATS_SERVICE')
-    private readonly clientProxy?: ClientProxy,
+    private readonly _clientProxy?: ClientProxy,
   ) {
     super();
   }
@@ -25,7 +25,6 @@ export class ServiceHealthIndicator extends HealthIndicator {
         };
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const result = await firstValueFrom(
         this.clientProxy.send(eventName, { check: true }).pipe(timeout(10_000)),
         {
@@ -34,7 +33,6 @@ export class ServiceHealthIndicator extends HealthIndicator {
       );
 
       return {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         [eventName]: result,
       };
     } catch (error) {

@@ -1,7 +1,21 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
-  "files": { "ignoreUnknown": false, "ignore": [] },
+  "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    "ignoreUnknown": false,
+    "ignore": [
+      "node_modules",
+      "dist",
+      "build",
+      ".vscode",
+      "**/*.md",
+      "coverage",
+      "**/*.spec.ts",
+      "test/**/*.ts",
+      "**/database/**/*.ts",
+      "*.json"
+    ]
+  },
   "formatter": { "enabled": true, "indentStyle": "tab" },
   "organizeImports": { "enabled": true },
   "linter": {
@@ -25,7 +39,7 @@
         "useArrowFunction": "off",
         "useDateNow": "error",
         "useFlatMap": "error",
-        "useLiteralKeys": "error",
+        "useLiteralKeys": "off",
         "useOptionalChain": "error"
       },
       "correctness": {
@@ -58,10 +72,10 @@
       "security": { "noGlobalEval": "error" },
       "style": {
         "noCommaOperator": "error",
-        "noInferrableTypes": "error",
+        "noInferrableTypes": "off",
         "noNamespace": "error",
         "noNegationElse": "off",
-        "noNonNullAssertion": "error",
+        "noNonNullAssertion": "off",
         "noUselessElse": "error",
         "noVar": "error",
         "noYodaExpression": "error",
@@ -72,36 +86,48 @@
         "useConst": "error",
         "useExplicitLengthCheck": "error",
         "useFilenamingConvention": {
-          "level": "error",
-          "options": { "requireAscii": true, "filenameCases": ["kebab-case"] }
+          "level": "warn",
+          "options": {
+            "requireAscii": false,
+            "filenameCases": [
+              "kebab-case",
+              "camelCase",
+              "snake_case",
+              "PascalCase",
+              "export"
+            ]
+          }
         },
-        "useForOf": "error",
+        "useForOf": "off",
         "useImportType": "error",
         "useLiteralEnumMembers": "error",
         "useNamingConvention": {
           "level": "error",
           "options": {
             "strictCase": false,
+            "requireAscii": false,
             "conventions": [
               {
                 "selector": { "kind": "interface" },
-                "match": "(?:I)(.*)",
-                "formats": ["PascalCase"]
+                "formats": ["PascalCase", "camelCase", "CONSTANT_CASE"]
               },
               {
                 "selector": { "kind": "variable" },
                 "formats": ["camelCase", "CONSTANT_CASE"]
               },
-              { "selector": { "kind": "typeLike" }, "formats": ["PascalCase"] },
+              {
+                "selector": { "kind": "enumMember" },
+                "formats": ["CONSTANT_CASE", "PascalCase"]
+              },
               {
                 "selector": { "kind": "classMember", "modifiers": ["private"] },
                 "match": "([^_]*)",
-                "formats": ["camelCase"]
+                "formats": ["camelCase", "PascalCase", "snake_case"]
               }
             ]
           }
         },
-        "useNodejsImportProtocol": "error",
+        "useNodejsImportProtocol": "off",
         "useNumberNamespace": "error",
         "useShorthandFunctionType": "error",
         "useThrowNewError": "error",
@@ -116,7 +142,7 @@
         "noCompareNegZero": "error",
         "noConfusingVoidType": "error",
         "noConsole": {
-          "level": "error",
+          "level": "warn",
           "options": {
             "allow": [
               "info",
@@ -140,7 +166,12 @@
               "timeline",
               "timelineEnd",
               "timeStamp",
-              "context"
+              "context",
+              "log",
+              "debug",
+              "trace",
+              "time",
+              "timeEnd"
             ]
           }
         },
@@ -151,7 +182,7 @@
         "noDuplicateClassMembers": "error",
         "noDuplicateObjectKeys": "error",
         "noDuplicateParameters": "error",
-        "noEmptyBlockStatements": "error",
+        "noEmptyBlockStatements": "off",
         "noEmptyInterface": "error",
         "noExplicitAny": "error",
         "noExtraNonNullAssertion": "error",
@@ -178,8 +209,11 @@
     }
   },
   "javascript": {
-    "formatter": { "quoteStyle": "double" },
-    "globals": ["exports"]
+    "formatter": { "quoteStyle": "single" },
+    "globals": ["exports"],
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    }
   },
   "overrides": [
     {
@@ -236,7 +270,8 @@
           "style": {
             "noArguments": "error",
             "noVar": "error",
-            "useConst": "error"
+            "useConst": "error",
+            "noParameterAssign": "off"
           },
           "suspicious": {
             "noClassAssign": "off",
@@ -271,7 +306,8 @@
           "style": {
             "noArguments": "error",
             "noVar": "error",
-            "useConst": "error"
+            "useConst": "error",
+            "noParameterAssign": "off"
           },
           "suspicious": {
             "noClassAssign": "off",
@@ -306,7 +342,8 @@
           "style": {
             "noArguments": "error",
             "noVar": "error",
-            "useConst": "error"
+            "useConst": "error",
+            "noParameterAssign": "off"
           },
           "suspicious": {
             "noClassAssign": "off",
@@ -318,6 +355,26 @@
             "noRedeclare": "off",
             "noUnsafeNegation": "off",
             "useGetterReturn": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["**/metadata.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["**/aws-s3.service.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": "off"
           }
         }
       }

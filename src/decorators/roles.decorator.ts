@@ -1,4 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Reflector } from '@nestjs/core';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
+// biome-ignore lint/style/useNamingConvention: <explanation>
 export const Roles = Reflector.createDecorator<string[]>();

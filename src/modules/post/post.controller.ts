@@ -1,3 +1,4 @@
+/* eslint-disable simple-import-sort/imports */
 import {
   Body,
   Controller,
@@ -28,11 +29,11 @@ import {
 import { UseLanguageInterceptor } from '../../interceptors/language-interceptor.service.ts';
 import type { Uuid } from '../../types.ts';
 import type { User } from '../user/types/user.type.ts';
-import { CreatePostDto } from './dtos/create-post.dto.ts';
+import type { CreatePostDto } from './dtos/create-post.dto.ts';
+import type { PostPageOptionsDto } from './dtos/post-page-options.dto.ts';
 import { PostDto } from './dtos/post.dto.ts';
-import { PostPageOptionsDto } from './dtos/post-page-options.dto.ts';
-import { UpdatePostDto } from './dtos/update-post.dto.ts';
-import { PostService } from './post.service.ts';
+import type { UpdatePostDto } from './dtos/update-post.dto.ts';
+import type { PostService } from './post.service.ts';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -55,6 +56,7 @@ export class PostController {
     return new PostDto(postEntity);
   }
 
+  // biome-ignore lint/suspicious/useAwait: <explanation>
   @Get()
   @Auth([RoleType.USER])
   @UseLanguageInterceptor()
@@ -85,6 +87,7 @@ export class PostController {
     @Body() updatePostDto: UpdatePostDto,
   ): Promise<PostDto> {
     const post = await this.postService.updatePost(id, updatePostDto);
+
     return new PostDto(post);
   }
 

@@ -35,7 +35,7 @@ export class AbstractClientService<ActionType> {
       class?: Constructor<R>;
       isPage?: boolean;
     }>,
-  ): Promise<R | PageDto<R> | void> {
+  ): Promise<R | PageDto<R> | undefined> {
     const returnData = await firstValueFrom(
       this.client.send<{ data?: R; meta?: PageMetaDto }>(pattern, data),
       {

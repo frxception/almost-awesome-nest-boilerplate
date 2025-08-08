@@ -1,84 +1,96 @@
 /* Custom styles for the Quick Start Interactive Guide */
 
 #quickstart-container {
-  animation: fadeIn 0.5s ease-in;
-  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.1);
+	animation: fadeIn 0.5s ease-in;
+	box-shadow: 0 4px 6px rgba(0, 123, 255, 0.1);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 #quickstart-container h2 {
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 10px;
+	border-bottom: 2px solid #007bff;
+	padding-bottom: 10px;
 }
 
 #quickstart-container h3 {
-  margin-top: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+	margin-top: 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
 }
 
 #quickstart-container input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+	outline: none;
+	border-color: #007bff;
+	box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 #quickstart-container button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	transition: all 0.2s ease;
 }
 
 #quickstart-container button:active:not(:disabled) {
-  transform: translateY(0);
+	transform: translateY(0);
 }
 
 #quickstart-container button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+	opacity: 0.6;
+	cursor: not-allowed;
 }
 
 #jwt-token-display {
-  transition: all 0.3s ease;
+	transition: all 0.3s ease;
 }
 
 #jwt-token-display:not(:empty) {
-  animation: pulse 2s infinite;
+	animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+	0% {
+		box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
+	}
+	70% {
+		box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+	}
 }
 
 /* Responsive design for smaller screens */
 @media (max-width: 768px) {
-  #quickstart-container div[style*="grid-template-columns"] {
-    grid-template-columns: 1fr !important;
-  }
-  
-  #quickstart-container {
-    margin: 10px 0;
-    padding: 15px;
-  }
-  
-  #jwt-token-display {
-    font-size: 10px !important;
-  }
+	#quickstart-container div[style*="grid-template-columns"] {
+		grid-template-columns: 1fr !important;
+	}
+
+	#quickstart-container {
+		margin: 10px 0;
+		padding: 15px;
+	}
+
+	#jwt-token-display {
+		font-size: 10px !important;
+	}
 }
 
 /* Integration with existing Swagger UI styles */
 .swagger-ui .description #quickstart-container {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.5;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	line-height: 1.5;
 }
 
 .swagger-ui .description #quickstart-container * {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }

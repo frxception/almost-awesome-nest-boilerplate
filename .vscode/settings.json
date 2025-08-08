@@ -4,12 +4,14 @@
   "rift.autostart": false,
   "i18n-ally.localesPaths": ["src/i18n"],
   "[javascript]": {
-    "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "biomejs.biome",
+    "source.organizeImports": true
   },
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit",
-    "source.organizeImports.biome": "explicit",
-    "quickfix.biome": "explicit"
+    // "source.organizeImports.biome": "explicit",
+    "quickfix.biome": "explicit",
+    "source.fixAll.eslint": "always"
   }
 }

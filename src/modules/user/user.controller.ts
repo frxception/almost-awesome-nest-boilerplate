@@ -18,12 +18,12 @@ import {
   UUIDParam,
 } from '../../decorators/http.decorators.ts';
 import { UseLanguageInterceptor } from '../../interceptors/language-interceptor.service.ts';
-import { TranslationService } from '../../shared/services/translation.service.ts';
+import type { TranslationService } from '../../shared/services/translation.service.ts';
 import type { Uuid } from '../../types.ts';
 import { UserDto } from './dtos/user.dto.ts';
-import { UsersPageOptionsDto } from './dtos/users-page-options.dto.ts';
+import type { UsersPageOptionsDto } from './dtos/users-page-options.dto.ts';
 import type { User } from './types/user.type.ts';
-import { UserService } from './user.service.ts';
+import type { UserService } from './user.service.ts';
 
 @Controller('users')
 @ApiTags('users')

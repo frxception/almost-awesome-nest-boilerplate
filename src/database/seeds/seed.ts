@@ -1,11 +1,17 @@
+import { hash } from 'bcrypt';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import { hash } from 'bcrypt';
 
-import { posts, postTranslations, users, userSettings } from '../schema/index.ts';
+import {
+  posts,
+  postTranslations,
+  users,
+  userSettings,
+} from '../schema/index.ts';
 
 // Database connection
-const connectionString = process.env.DATABASE_URL || 
+const connectionString =
+  process.env.DATABASE_URL ||
   `postgres://${process.env.DB_USERNAME || 'postgres'}:${process.env.DB_PASSWORD || 'postgres'}@${process.env.DB_HOST || 'localhost'}:${process.env.DB_PORT || 5432}/${process.env.DB_DATABASE || 'nest_boilerplate'}`;
 
 const connection = postgres(connectionString);
@@ -27,98 +33,101 @@ async function seed() {
 
     // Create dummy users
     console.log('👥 Creating users...');
-    const insertedUsers = await db.insert(users).values([
-      {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        password: hashedPassword,
-        phone: '+1234567890',
-        role: 'ADMIN',
-        avatar: null,
-      },
-      {
-        firstName: 'Jane',
-        lastName: 'Smith',
-        email: 'jane.smith@example.com',
-        password: hashedPassword,
-        phone: '+1234567891',
-        role: 'USER',
-        avatar: null,
-      },
-      {
-        firstName: 'Bob',
-        lastName: 'Johnson',
-        email: 'bob.johnson@example.com',
-        password: hashedPassword,
-        phone: '+1234567892',
-        role: 'USER',
-        avatar: null,
-      },
-      {
-        firstName: 'Alice',
-        lastName: 'Williams',
-        email: 'alice.williams@example.com',
-        password: hashedPassword,
-        phone: '+1234567893',
-        role: 'USER',
-        avatar: null,
-      },
-      {
-        firstName: 'Charlie',
-        lastName: 'Brown',
-        email: 'charlie.brown@example.com',
-        password: hashedPassword,
-        phone: '+1234567894',
-        role: 'USER',
-        avatar: null,
-      },
-      {
-        firstName: 'Diana',
-        lastName: 'Davis',
-        email: 'diana.davis@example.com',
-        password: hashedPassword,
-        phone: '+1234567895',
-        role: 'ADMIN',
-        avatar: null,
-      },
-      {
-        firstName: 'Eva',
-        lastName: 'Miller',
-        email: 'eva.miller@example.com',
-        password: hashedPassword,
-        phone: '+1234567896',
-        role: 'USER',
-        avatar: null,
-      },
-      {
-        firstName: 'Frank',
-        lastName: 'Wilson',
-        email: 'frank.wilson@example.com',
-        password: hashedPassword,
-        phone: '+1234567897',
-        role: 'USER',
-        avatar: null,
-      },
-      {
-        firstName: 'Grace',
-        lastName: 'Moore',
-        email: 'grace.moore@example.com',
-        password: hashedPassword,
-        phone: '+1234567898',
-        role: 'USER',
-        avatar: null,
-      },
-      {
-        firstName: 'Henry',
-        lastName: 'Taylor',
-        email: 'henry.taylor@example.com',
-        password: hashedPassword,
-        phone: '+1234567899',
-        role: 'USER',
-        avatar: null,
-      },
-    ]).returning();
+    const insertedUsers = await db
+      .insert(users)
+      .values([
+        {
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john.doe@example.com',
+          password: hashedPassword,
+          phone: '+1234567890',
+          role: 'ADMIN',
+          avatar: null,
+        },
+        {
+          firstName: 'Jane',
+          lastName: 'Smith',
+          email: 'jane.smith@example.com',
+          password: hashedPassword,
+          phone: '+1234567891',
+          role: 'USER',
+          avatar: null,
+        },
+        {
+          firstName: 'Bob',
+          lastName: 'Johnson',
+          email: 'bob.johnson@example.com',
+          password: hashedPassword,
+          phone: '+1234567892',
+          role: 'USER',
+          avatar: null,
+        },
+        {
+          firstName: 'Alice',
+          lastName: 'Williams',
+          email: 'alice.williams@example.com',
+          password: hashedPassword,
+          phone: '+1234567893',
+          role: 'USER',
+          avatar: null,
+        },
+        {
+          firstName: 'Charlie',
+          lastName: 'Brown',
+          email: 'charlie.brown@example.com',
+          password: hashedPassword,
+          phone: '+1234567894',
+          role: 'USER',
+          avatar: null,
+        },
+        {
+          firstName: 'Diana',
+          lastName: 'Davis',
+          email: 'diana.davis@example.com',
+          password: hashedPassword,
+          phone: '+1234567895',
+          role: 'ADMIN',
+          avatar: null,
+        },
+        {
+          firstName: 'Eva',
+          lastName: 'Miller',
+          email: 'eva.miller@example.com',
+          password: hashedPassword,
+          phone: '+1234567896',
+          role: 'USER',
+          avatar: null,
+        },
+        {
+          firstName: 'Frank',
+          lastName: 'Wilson',
+          email: 'frank.wilson@example.com',
+          password: hashedPassword,
+          phone: '+1234567897',
+          role: 'USER',
+          avatar: null,
+        },
+        {
+          firstName: 'Grace',
+          lastName: 'Moore',
+          email: 'grace.moore@example.com',
+          password: hashedPassword,
+          phone: '+1234567898',
+          role: 'USER',
+          avatar: null,
+        },
+        {
+          firstName: 'Henry',
+          lastName: 'Taylor',
+          email: 'henry.taylor@example.com',
+          password: hashedPassword,
+          phone: '+1234567899',
+          role: 'USER',
+          avatar: null,
+        },
+      ])
+      .returning();
 
     console.log(`✅ Created ${insertedUsers.length} users`);
 
@@ -130,7 +139,10 @@ async function seed() {
       isPhoneVerified: index % 3 === 0,
     }));
 
-    const insertedSettings = await db.insert(userSettings).values(userSettingsData).returning();
+    const insertedSettings = await db
+      .insert(userSettings)
+      .values(userSettingsData)
+      .returning();
     console.log(`✅ Created ${insertedSettings.length} user settings`);
 
     // Create dummy posts
@@ -141,7 +153,7 @@ async function seed() {
     for (const user of insertedUsers) {
       // Create 2-3 posts per user
       const postsPerUser = Math.floor(Math.random() * 2) + 2; // 2-3 posts
-      
+
       for (let i = 0; i < postsPerUser; i++) {
         postData.push({
           userId: user.id,
@@ -207,12 +219,12 @@ async function seed() {
       title: string;
       description: string;
     }> = [];
-    
-    insertedPosts.forEach((post, index) => {
+
+    for (const [index, post] of insertedPosts.entries()) {
       const titleIndex = index % postTitles.length;
       const title = postTitles[titleIndex]!;
       const description = postDescriptions[titleIndex]!;
-      
+
       // Create English translation
       translationData.push({
         postId: post.id,
@@ -230,9 +242,12 @@ async function seed() {
           description: `${description} (описание на русском языке)`,
         });
       }
-    });
+    }
 
-    const insertedTranslations = await db.insert(postTranslations).values(translationData).returning();
+    const insertedTranslations = await db
+      .insert(postTranslations)
+      .values(translationData)
+      .returning();
     console.log(`✅ Created ${insertedTranslations.length} post translations`);
 
     console.log('\n🎉 Database seeding completed successfully!');
@@ -243,11 +258,13 @@ async function seed() {
     console.log(`   • Post Translations: ${insertedTranslations.length}`);
     console.log('\n🔐 Login credentials for all users:');
     console.log('   • Password: password123');
-    console.log('   • Admin users: john.doe@example.com, diana.davis@example.com');
+    console.log(
+      '   • Admin users: john.doe@example.com, diana.davis@example.com',
+    );
     console.log('   • Regular users: All other emails');
-
   } catch (error) {
     console.error('❌ Error seeding database:', error);
+
     throw error;
   } finally {
     await connection.end();

@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import type { CommandBus } from '@nestjs/cqrs';
 import { plainToClass } from 'class-transformer';
 import { desc, eq, or, sql } from 'drizzle-orm';
 
 import { PageDto } from '../../common/dto/page.dto.ts';
 import { PageMetaDto } from '../../common/dto/page-meta.dto.ts';
 import { generateHash } from '../../common/utils.ts';
-import { RoleType } from '../../constants/role-type.ts';
-import { DrizzleService } from '../../database/drizzle.service.ts';
+import type { RoleType } from '../../constants/role-type.ts';
+import type { DrizzleService } from '../../database/drizzle.service.ts';
 import { users } from '../../database/schema/user.ts';
 
 type DbUser = typeof users.$inferSelect;
 import { FileNotImageException } from '../../exceptions/file-not-image.exception.ts';
 import { UserNotFoundException } from '../../exceptions/user-not-found.exception.ts';
 import type { IFile } from '../../interfaces/IFile.ts';
-import { AwsS3Service } from '../../shared/services/aws-s3.service.ts';
-import { ValidatorService } from '../../shared/services/validator.service.ts';
+import type { AwsS3Service } from '../../shared/services/aws-s3.service.ts';
+import type { ValidatorService } from '../../shared/services/validator.service.ts';
 import type { Reference, Uuid } from '../../types.ts';
-import { UserRegisterDto } from '../auth/dto/user-register.dto.ts';
+import type { UserRegisterDto } from '../auth/dto/user-register.dto.ts';
 import { CreateSettingsCommand } from './commands/create-settings.command.ts';
 import { CreateSettingsDto } from './dtos/create-settings.dto.ts';
 import { UserDto } from './dtos/user.dto.ts';

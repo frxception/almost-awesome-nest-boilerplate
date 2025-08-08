@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import type { CommandBus } from '@nestjs/cqrs';
 import { asc, desc, eq, sql } from 'drizzle-orm';
 
 import type { PageDto } from '../../common/dto/page.dto.ts';
 import { Order } from '../../constants/order.ts';
-import { DrizzleService } from '../../database/drizzle.service.ts';
+import type { DrizzleService } from '../../database/drizzle.service.ts';
 import { posts } from '../../database/schema/post.ts';
 import type { Uuid } from '../../types.ts';
 import { CreatePostCommand } from './commands/create-post.command.ts';
-import { CreatePostDto } from './dtos/create-post.dto.ts';
+import type { CreatePostDto } from './dtos/create-post.dto.ts';
 import { PostDto } from './dtos/post.dto.ts';
 import type { PostPageOptionsDto } from './dtos/post-page-options.dto.ts';
 import type { UpdatePostDto } from './dtos/update-post.dto.ts';
@@ -79,7 +79,7 @@ export class PostService {
     return post;
   }
 
-  async updatePost(id: Uuid, updatePostDto: UpdatePostDto): Promise<Post> {
+  async updatePost(id: Uuid, _updatePostDto: UpdatePostDto): Promise<Post> {
     const [post] = await this.drizzleService.database
       .select()
       .from(posts)
@@ -93,7 +93,7 @@ export class PostService {
     // TODO: Implement translation updates
     // For now, just return the existing post since no actual post fields need updating
     // The translation updates would need to be handled separately
-    
+
     return post;
   }
 

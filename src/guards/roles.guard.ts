@@ -1,6 +1,6 @@
 import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import type { Reflector } from '@nestjs/core';
 
 import type { RoleType } from '../constants/role-type.ts';
 import type { User } from '../modules/user/types/user.type.ts';
@@ -15,7 +15,7 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
     );
 
-    if (!roles?.length) {
+    if (roles?.length === 0) {
       return true;
     }
 

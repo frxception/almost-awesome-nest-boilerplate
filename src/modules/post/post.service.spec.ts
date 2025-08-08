@@ -1,216 +1,224 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { CommandBus } from '@nestjs/cqrs';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { sql } from 'drizzle-orm';
 
-import { PostService } from './post.service.ts';
-import { DrizzleService } from '../../database/drizzle.service.ts';
-import { PostNotFoundException } from './exceptions/post-not-found.exception.ts';
+import {
+	CreatePostDtoFactory,
+	PostFactory,
+	UpdatePostDtoFactory,
+} from '../../../test/factories/index.ts';
 import { mockDrizzleService } from '../../../test/mocks/drizzle.mock.ts';
 import { mockCommandBus } from '../../../test/mocks/services.mock.ts';
-import { PostFactory, CreatePostDtoFactory, UpdatePostDtoFactory } from '../../../test/factories/index.ts';
+import { DrizzleService } from '../../database/drizzle.service.ts';
 import { CreatePostCommand } from './commands/create-post.command.ts';
-import { PostDto } from './dtos/post.dto.ts';
 import { PostPageOptionsDto } from './dtos/post-page-options.dto.ts';
+import { PostDto } from './dtos/post.dto.ts';
+import { PostNotFoundException } from './exceptions/post-not-found.exception.ts';
+import { PostService } from './post.service.ts';
 
 describe('PostService', () => {
-  let service: PostService;
-  let drizzleService: DrizzleService;
-  let commandBus: CommandBus;
+	let service: PostService;
+	let _drizzleService: DrizzleService;
+	let _commandBus: CommandBus;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        PostService,
-        {
-          provide: DrizzleService,
-          useValue: mockDrizzleService,
-        },
-        {
-          provide: CommandBus,
-          useValue: mockCommandBus,
-        },
-      ],
-    }).compile();
+	beforeEach(async () => {
+		const module: TestingModule = await Test.createTestingModule({
+			providers: [
+				PostService,
+				{
+					provide: DrizzleService,
+					useValue: mockDrizzleService,
+				},
+				{
+					provide: CommandBus,
+					useValue: mockCommandBus,
+				},
+			],
+		}).compile();
 
-    service = module.get<PostService>(PostService);
-    drizzleService = module.get<DrizzleService>(DrizzleService);
-    commandBus = module.get<CommandBus>(CommandBus);
-  });
+		service = module.get<PostService>(PostService);
+		_drizzleService = module.get<DrizzleService>(DrizzleService);
+		_commandBus = module.get<CommandBus>(CommandBus);
+	});
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
 
-  describe('createPost', () => {
-    it('should create a post using command bus', async () => {
-      // Arrange
-      const userId = 'test-user-id';
-      const createPostDto = CreatePostDtoFactory.create();
-      const expectedPost = PostFactory.create({ userId });
+	describe('createPost', () => {
+		it('should create a post using command bus', async () => {
+			// Arrange
+			const userId = 'test-user-id';
+			const createPostDto = CreatePostDtoFactory.create();
+			const expectedPost = PostFactory.create({ userId });
 
-      mockCommandBus.execute.mockResolvedValue(expectedPost);
+			mockCommandBus.execute.mockResolvedValue(expectedPost);
 
-      // Act
-      const result = await service.createPost(userId, createPostDto);
+			// Act
+			const result = await service.createPost(userId, createPostDto);
 
-      // Assert
-      expect(result).toEqual(expectedPost);
-      expect(mockCommandBus.execute).toHaveBeenCalledWith(
-        expect.any(CreatePostCommand)
-      );
-    });
-  });
+			// Assert
+			expect(result).toEqual(expectedPost);
+			expect(mockCommandBus.execute).toHaveBeenCalledWith(
+				expect.any(CreatePostCommand),
+			);
+		});
+	});
 
-  describe('getSinglePost', () => {
-    it('should return a post when found', async () => {
-      // Arrange
-      const postId = 'test-post-id';
-      const expectedPost = PostFactory.create({ id: postId });
+	describe('getSinglePost', () => {
+		it('should return a post when found', async () => {
+			// Arrange
+			const postId = 'test-post-id';
+			const expectedPost = PostFactory.create({ id: postId });
 
-      mockDrizzleService.database.select.mockReturnValue({
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockReturnValue({
-            limit: jest.fn().mockResolvedValue([expectedPost]),
-          }),
-        }),
-      });
+			mockDrizzleService.database.select.mockReturnValue({
+				from: jest.fn().mockReturnValue({
+					where: jest.fn().mockReturnValue({
+						limit: jest.fn().mockResolvedValue([expectedPost]),
+					}),
+				}),
+			});
 
-      // Act
-      const result = await service.getSinglePost(postId);
+			// Act
+			const result = await service.getSinglePost(postId);
 
-      // Assert
-      expect(result).toEqual(expectedPost);
-      expect(mockDrizzleService.database.select).toHaveBeenCalled();
-    });
+			// Assert
+			expect(result).toEqual(expectedPost);
+			expect(mockDrizzleService.database.select).toHaveBeenCalled();
+		});
 
-    it('should throw PostNotFoundException when post not found', async () => {
-      // Arrange
-      const postId = 'non-existent-post-id';
+		it('should throw PostNotFoundException when post not found', async () => {
+			// Arrange
+			const postId = 'non-existent-post-id';
 
-      mockDrizzleService.database.select.mockReturnValue({
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockReturnValue({
-            limit: jest.fn().mockResolvedValue([]),
-          }),
-        }),
-      });
+			mockDrizzleService.database.select.mockReturnValue({
+				from: jest.fn().mockReturnValue({
+					where: jest.fn().mockReturnValue({
+						limit: jest.fn().mockResolvedValue([]),
+					}),
+				}),
+			});
 
-      // Act & Assert
-      await expect(service.getSinglePost(postId)).rejects.toThrow(PostNotFoundException);
-    });
-  });
+			// Act & Assert
+			await expect(service.getSinglePost(postId)).rejects.toThrow(
+				PostNotFoundException,
+			);
+		});
+	});
 
-  describe('getAllPost', () => {
-    it('should return paginated posts', async () => {
-      // Arrange
-      const pageOptionsDto = new PostPageOptionsDto();
-      (pageOptionsDto as any).take = 10;
-      (pageOptionsDto as any).page = 1;
-      
-      const posts = PostFactory.createMany(5);
-      const totalCount = 25;
+	describe('getAllPost', () => {
+		it('should return paginated posts', async () => {
+			// Arrange
+			const pageOptionsDto = new PostPageOptionsDto();
+			(pageOptionsDto as any).take = 10;
+			(pageOptionsDto as any).page = 1;
 
-      mockDrizzleService.database.select
-        .mockReturnValueOnce({
-          from: jest.fn().mockReturnValue({
-            orderBy: jest.fn().mockReturnValue({
-              limit: jest.fn().mockReturnValue({
-                offset: jest.fn().mockResolvedValue(posts),
-              }),
-            }),
-          }),
-        })
-        .mockReturnValueOnce({
-          from: jest.fn().mockResolvedValue([{ count: totalCount }]),
-        });
+			const posts = PostFactory.createMany(5);
+			const totalCount = 25;
 
-      // Act
-      const result = await service.getAllPost(pageOptionsDto);
+			mockDrizzleService.database.select
+				.mockReturnValueOnce({
+					from: jest.fn().mockReturnValue({
+						orderBy: jest.fn().mockReturnValue({
+							limit: jest.fn().mockReturnValue({
+								offset: jest.fn().mockResolvedValue(posts),
+							}),
+						}),
+					}),
+				})
+				.mockReturnValueOnce({
+					from: jest.fn().mockResolvedValue([{ count: totalCount }]),
+				});
 
-      // Assert
-      expect(result.data).toHaveLength(5);
-      expect(result.meta.itemCount).toBe(totalCount);
-      expect(result.data[0]).toBeInstanceOf(PostDto);
-    });
-  });
+			// Act
+			const result = await service.getAllPost(pageOptionsDto);
 
-  describe('updatePost', () => {
-    it('should update a post successfully', async () => {
-      // Arrange
-      const postId = 'test-post-id';
-      const updatePostDto = UpdatePostDtoFactory.create();
-      const existingPost = PostFactory.create({ id: postId });
+			// Assert
+			expect(result.data).toHaveLength(5);
+			expect(result.meta.itemCount).toBe(totalCount);
+			expect(result.data[0]).toBeInstanceOf(PostDto);
+		});
+	});
 
-      // Mock the select query to find the post first
-      mockDrizzleService.database.select.mockReturnValue({
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockReturnValue({
-            limit: jest.fn().mockResolvedValue([existingPost]),
-          }),
-        }),
-      });
+	describe('updatePost', () => {
+		it('should update a post successfully', async () => {
+			// Arrange
+			const postId = 'test-post-id';
+			const updatePostDto = UpdatePostDtoFactory.create();
+			const existingPost = PostFactory.create({ id: postId });
 
-      // Mock the update query
-      mockDrizzleService.database.update.mockReturnValue({
-        set: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue(undefined),
-        }),
-      });
+			// Mock the select query to find the post first
+			mockDrizzleService.database.select.mockReturnValue({
+				from: jest.fn().mockReturnValue({
+					where: jest.fn().mockReturnValue({
+						limit: jest.fn().mockResolvedValue([existingPost]),
+					}),
+				}),
+			});
 
-      // Act
-      const result = await service.updatePost(postId, updatePostDto);
+			// Mock the update query
+			mockDrizzleService.database.update.mockReturnValue({
+				set: jest.fn().mockReturnValue({
+					where: jest.fn().mockResolvedValue(undefined),
+				}),
+			});
 
-      // Assert
-      expect(result).toBeUndefined(); // updatePost returns void
-      expect(mockDrizzleService.database.select).toHaveBeenCalled();
-      expect(mockDrizzleService.database.update).toHaveBeenCalled();
-    });
-  });
+			// Act
+			const result = await service.updatePost(postId, updatePostDto);
 
-  describe('deletePost', () => {
-    it('should delete a post successfully', async () => {
-      // Arrange
-      const postId = 'test-post-id';
-      const existingPost = PostFactory.create({ id: postId });
+			// Assert
+			expect(result).toBeUndefined(); // updatePost returns void
+			expect(mockDrizzleService.database.select).toHaveBeenCalled();
+			expect(mockDrizzleService.database.update).toHaveBeenCalled();
+		});
+	});
 
-      // Mock the select query to find the post first
-      mockDrizzleService.database.select.mockReturnValue({
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockReturnValue({
-            limit: jest.fn().mockResolvedValue([existingPost]),
-          }),
-        }),
-      });
+	describe('deletePost', () => {
+		it('should delete a post successfully', async () => {
+			// Arrange
+			const postId = 'test-post-id';
+			const existingPost = PostFactory.create({ id: postId });
 
-      // Mock the delete query
-      mockDrizzleService.database.delete.mockReturnValue({
-        where: jest.fn().mockResolvedValue(undefined),
-      });
+			// Mock the select query to find the post first
+			mockDrizzleService.database.select.mockReturnValue({
+				from: jest.fn().mockReturnValue({
+					where: jest.fn().mockReturnValue({
+						limit: jest.fn().mockResolvedValue([existingPost]),
+					}),
+				}),
+			});
 
-      // Act
-      await service.deletePost(postId);
+			// Mock the delete query
+			mockDrizzleService.database.delete.mockReturnValue({
+				where: jest.fn().mockResolvedValue(undefined),
+			});
 
-      // Assert
-      expect(mockDrizzleService.database.select).toHaveBeenCalled();
-      expect(mockDrizzleService.database.delete).toHaveBeenCalled();
-    });
+			// Act
+			await service.deletePost(postId);
 
-    it('should throw PostNotFoundException when post to delete not found', async () => {
-      // Arrange
-      const postId = 'non-existent-post-id';
+			// Assert
+			expect(mockDrizzleService.database.select).toHaveBeenCalled();
+			expect(mockDrizzleService.database.delete).toHaveBeenCalled();
+		});
 
-      // Mock the select query to return empty array (post not found)
-      mockDrizzleService.database.select.mockReturnValue({
-        from: jest.fn().mockReturnValue({
-          where: jest.fn().mockReturnValue({
-            limit: jest.fn().mockResolvedValue([]), // Empty array means not found
-          }),
-        }),
-      });
+		it('should throw PostNotFoundException when post to delete not found', async () => {
+			// Arrange
+			const postId = 'non-existent-post-id';
 
-      // Act & Assert
-      await expect(service.deletePost(postId)).rejects.toThrow(PostNotFoundException);
-      expect(mockDrizzleService.database.select).toHaveBeenCalled();
-    });
-  });
+			// Mock the select query to return empty array (post not found)
+			mockDrizzleService.database.select.mockReturnValue({
+				from: jest.fn().mockReturnValue({
+					where: jest.fn().mockReturnValue({
+						limit: jest.fn().mockResolvedValue([]), // Empty array means not found
+					}),
+				}),
+			});
+
+			// Act & Assert
+			await expect(service.deletePost(postId)).rejects.toThrow(
+				PostNotFoundException,
+			);
+			expect(mockDrizzleService.database.select).toHaveBeenCalled();
+		});
+	});
 });

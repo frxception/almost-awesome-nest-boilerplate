@@ -1,367 +1,370 @@
 import type { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
 import { HttpStatus } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import request from 'supertest';
 
 import { AppModule } from '../src/app.module';
 
 describe('API E2E Tests', () => {
-  let app: INestApplication;
-  let adminToken: string;
-  let userToken: string;
-  let testUserId: string;
-  let testPostId: string;
-  const timestamp = Date.now();
+	let app: INestApplication;
+	let adminToken: string;
+	let userToken: string;
+	let testUserId: string;
+	let testPostId: string;
+	const timestamp = Date.now();
 
-  beforeAll(async () => {
-    const moduleFixture = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+	beforeAll(async () => {
+		const moduleFixture = await Test.createTestingModule({
+			imports: [AppModule],
+		}).compile();
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
+		app = moduleFixture.createNestApplication();
+		await app.init();
 
-    // Setup admin user for testing
-    await setupAdminUser();
-  });
+		// Setup admin user for testing
+		await setupAdminUser();
+	});
 
-  afterAll(async () => {
-    await app.close();
-  });
+	afterAll(async () => {
+		await app.close();
+	});
 
-  async function setupAdminUser() {
-    // Login as admin using seeded data (john.doe@example.com is an admin)
-    const response = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({
-        email: 'john.doe@example.com',
-        password: 'password123',
-      });
+	async function setupAdminUser() {
+		// Login as admin using seeded data (john.doe@example.com is an admin)
+		const response = await request(app.getHttpServer())
+			.post('/auth/login')
+			.send({
+				email: 'john.doe@example.com',
+				password: 'password123',
+			});
 
-    adminToken = response.body.accessToken.token;
-  }
+		adminToken = response.body.accessToken.token;
+	}
 
-  describe('Authentication Endpoints (e2e)', () => {
-    describe('POST /auth/register', () => {
-      it('should register a new user', async () => {
-        const registerDto = {
-          firstName: 'Test',
-          lastName: 'User',
-          email: `test.user.${timestamp}@example.com`,
-          password: 'password123',
-        };
+	describe('Authentication Endpoints (e2e)', () => {
+		describe('POST /auth/register', () => {
+			it('should register a new user', async () => {
+				const registerDto = {
+					firstName: 'Test',
+					lastName: 'User',
+					email: `test.user.${timestamp}@example.com`,
+					password: 'password123',
+				};
 
-        const response = await request(app.getHttpServer())
-          .post('/auth/register')
-          .send(registerDto)
-          .expect(HttpStatus.OK);
+				const response = await request(app.getHttpServer())
+					.post('/auth/register')
+					.send(registerDto)
+					.expect(HttpStatus.OK);
 
-        expect(response.body.firstName).toBe(registerDto.firstName);
-        expect(response.body.email).toBe(registerDto.email);
-        expect(response.body.password).toBeUndefined();
-        
-        testUserId = response.body.id;
-      });
+				expect(response.body.firstName).toBe(registerDto.firstName);
+				expect(response.body.email).toBe(registerDto.email);
+				expect(response.body.password).toBeUndefined();
 
-      it('should return validation error for invalid email', async () => {
-        const invalidDto = {
-          firstName: 'John',
-          lastName: 'Doe',
-          email: 'invalid-email',
-          password: 'password123',
-        };
+				testUserId = response.body.id;
+			});
 
-        await request(app.getHttpServer())
-          .post('/auth/register')
-          .send(invalidDto)
-          .expect(HttpStatus.INTERNAL_SERVER_ERROR);
-      });
+			it('should return validation error for invalid email', async () => {
+				const invalidDto = {
+					firstName: 'John',
+					lastName: 'Doe',
+					email: 'invalid-email',
+					password: 'password123',
+				};
 
-      it('should return error for duplicate email', async () => {
-        const duplicateDto = {
-          firstName: 'Jane',
-          lastName: 'Smith',
-          email: `test.user.${timestamp}@example.com`, // Same email as previous test
-          password: 'password123',
-        };
+				await request(app.getHttpServer())
+					.post('/auth/register')
+					.send(invalidDto)
+					.expect(HttpStatus.INTERNAL_SERVER_ERROR);
+			});
 
-        await request(app.getHttpServer())
-          .post('/auth/register')
-          .send(duplicateDto)
-          .expect(HttpStatus.INTERNAL_SERVER_ERROR);
-      });
-    });
+			it('should return error for duplicate email', async () => {
+				const duplicateDto = {
+					firstName: 'Jane',
+					lastName: 'Smith',
+					email: `test.user.${timestamp}@example.com`, // Same email as previous test
+					password: 'password123',
+				};
 
-    describe('POST /auth/login', () => {
-      it('should login with valid credentials', async () => {
-        const loginDto = {
-          email: `test.user.${timestamp}@example.com`,
-          password: 'password123',
-        };
+				await request(app.getHttpServer())
+					.post('/auth/register')
+					.send(duplicateDto)
+					.expect(HttpStatus.INTERNAL_SERVER_ERROR);
+			});
+		});
 
-        const response = await request(app.getHttpServer())
-          .post('/auth/login')
-          .send(loginDto)
-          .expect(HttpStatus.OK);
+		describe('POST /auth/login', () => {
+			it('should login with valid credentials', async () => {
+				const loginDto = {
+					email: `test.user.${timestamp}@example.com`,
+					password: 'password123',
+				};
 
-        expect(response.body.user).toBeDefined();
-        expect(response.body.accessToken).toBeDefined();
-        expect(response.body.accessToken.token).toBeDefined();
-        expect(response.body.user.email).toBe(loginDto.email);
+				const response = await request(app.getHttpServer())
+					.post('/auth/login')
+					.send(loginDto)
+					.expect(HttpStatus.OK);
 
-        userToken = response.body.accessToken.token;
-      });
+				expect(response.body.user).toBeDefined();
+				expect(response.body.accessToken).toBeDefined();
+				expect(response.body.accessToken.token).toBeDefined();
+				expect(response.body.user.email).toBe(loginDto.email);
 
-      it('should reject invalid credentials', async () => {
-        const invalidDto = {
-          email: `test.user.${timestamp}@example.com`,
-          password: 'wrongpassword',
-        };
+				userToken = response.body.accessToken.token;
+			});
 
-        await request(app.getHttpServer())
-          .post('/auth/login')
-          .send(invalidDto)
-          .expect(HttpStatus.NOT_FOUND);
-      });
+			it('should reject invalid credentials', async () => {
+				const invalidDto = {
+					email: `test.user.${timestamp}@example.com`,
+					password: 'wrongpassword',
+				};
 
-      it('should reject non-existent user', async () => {
-        const nonExistentDto = {
-          email: 'nonexistent@example.com',
-          password: 'password123',
-        };
+				await request(app.getHttpServer())
+					.post('/auth/login')
+					.send(invalidDto)
+					.expect(HttpStatus.NOT_FOUND);
+			});
 
-        await request(app.getHttpServer())
-          .post('/auth/login')
-          .send(nonExistentDto)
-          .expect(HttpStatus.NOT_FOUND);
-      });
-    });
+			it('should reject non-existent user', async () => {
+				const nonExistentDto = {
+					email: 'nonexistent@example.com',
+					password: 'password123',
+				};
 
-    describe('GET /auth/me', () => {
-      it('should return current user with valid token', async () => {
-        const response = await request(app.getHttpServer())
-          .get('/auth/me')
-          .set('Authorization', `Bearer ${userToken}`)
-          .expect(HttpStatus.OK);
+				await request(app.getHttpServer())
+					.post('/auth/login')
+					.send(nonExistentDto)
+					.expect(HttpStatus.NOT_FOUND);
+			});
+		});
 
-        expect(response.body.id).toBeDefined();
-        expect(response.body.email).toBe(`test.user.${timestamp}@example.com`);
-      });
+		describe('GET /auth/me', () => {
+			it('should return current user with valid token', async () => {
+				const response = await request(app.getHttpServer())
+					.get('/auth/me')
+					.set('Authorization', `Bearer ${userToken}`)
+					.expect(HttpStatus.OK);
 
-      it('should reject requests without token', async () => {
-        await request(app.getHttpServer())
-          .get('/auth/me')
-          .expect(HttpStatus.UNAUTHORIZED);
-      });
+				expect(response.body.id).toBeDefined();
+				expect(response.body.email).toBe(`test.user.${timestamp}@example.com`);
+			});
 
-      it('should reject requests with invalid token', async () => {
-        await request(app.getHttpServer())
-          .get('/auth/me')
-          .set('Authorization', 'Bearer invalid.token.here')
-          .expect(HttpStatus.UNAUTHORIZED);
-      });
-    });
-  });
+			it('should reject requests without token', async () => {
+				await request(app.getHttpServer())
+					.get('/auth/me')
+					.expect(HttpStatus.UNAUTHORIZED);
+			});
 
-  describe('User Endpoints (e2e)', () => {
-    describe('GET /users/:id', () => {
-      it('should return user by id with valid token', async () => {
-        const response = await request(app.getHttpServer())
-          .get(`/users/${testUserId}`)
-          .set('Authorization', `Bearer ${userToken}`)
-          .expect(HttpStatus.OK);
+			it('should reject requests with invalid token', async () => {
+				await request(app.getHttpServer())
+					.get('/auth/me')
+					.set('Authorization', 'Bearer invalid.token.here')
+					.expect(HttpStatus.UNAUTHORIZED);
+			});
+		});
+	});
 
-        expect(response.body.id).toBe(testUserId);
-        expect(response.body.email).toBe(`test.user.${timestamp}@example.com`);
-      });
+	describe('User Endpoints (e2e)', () => {
+		describe('GET /users/:id', () => {
+			it('should return user by id with valid token', async () => {
+				const response = await request(app.getHttpServer())
+					.get(`/users/${testUserId}`)
+					.set('Authorization', `Bearer ${userToken}`)
+					.expect(HttpStatus.OK);
 
-      it('should reject requests without token', async () => {
-        await request(app.getHttpServer())
-          .get(`/users/${testUserId}`)
-          .expect(HttpStatus.UNAUTHORIZED);
-      });
+				expect(response.body.id).toBe(testUserId);
+				expect(response.body.email).toBe(`test.user.${timestamp}@example.com`);
+			});
 
-      it('should return 404 for non-existent user', async () => {
-        const nonExistentId = '00000000-0000-4000-8000-000000000000';
+			it('should reject requests without token', async () => {
+				await request(app.getHttpServer())
+					.get(`/users/${testUserId}`)
+					.expect(HttpStatus.UNAUTHORIZED);
+			});
 
-        await request(app.getHttpServer())
-          .get(`/users/${nonExistentId}`)
-          .set('Authorization', `Bearer ${userToken}`)
-          .expect(HttpStatus.NOT_FOUND);
-      });
-    });
+			it('should return 404 for non-existent user', async () => {
+				const nonExistentId = '00000000-0000-4000-8000-000000000000';
 
-    describe('GET /users', () => {
-      it('should return paginated users', async () => {
-        const response = await request(app.getHttpServer())
-          .get('/users?page=1&take=10')
-          .set('Authorization', `Bearer ${userToken}`)
-          .expect(HttpStatus.OK);
+				await request(app.getHttpServer())
+					.get(`/users/${nonExistentId}`)
+					.set('Authorization', `Bearer ${userToken}`)
+					.expect(HttpStatus.NOT_FOUND);
+			});
+		});
 
-        expect(response.body.data).toBeDefined();
-        expect(response.body.meta).toBeDefined();
-        expect(Array.isArray(response.body.data)).toBe(true);
-        expect(response.body.meta.page).toBe(1);
-      });
+		describe('GET /users', () => {
+			it('should return paginated users', async () => {
+				const response = await request(app.getHttpServer())
+					.get('/users?page=1&take=10')
+					.set('Authorization', `Bearer ${userToken}`)
+					.expect(HttpStatus.OK);
 
-      it('should handle pagination parameters', async () => {
-        const response = await request(app.getHttpServer())
-          .get('/users?page=2&take=5')
-          .set('Authorization', `Bearer ${userToken}`)
-          .expect(HttpStatus.OK);
+				expect(response.body.data).toBeDefined();
+				expect(response.body.meta).toBeDefined();
+				expect(Array.isArray(response.body.data)).toBe(true);
+				expect(response.body.meta.page).toBe(1);
+			});
 
-        expect(response.body.meta.page).toBe(2);
-        expect(response.body.meta.take).toBe(5);
-      });
-    });
-  });
+			it('should handle pagination parameters', async () => {
+				const response = await request(app.getHttpServer())
+					.get('/users?page=2&take=5')
+					.set('Authorization', `Bearer ${userToken}`)
+					.expect(HttpStatus.OK);
 
-  describe('Post Endpoints (e2e)', () => {
-    describe('POST /posts', () => {
-      it('should create a post with valid token', async () => {
-        const createPostDto = {
-          title: [
-            { languageCode: 'en_US', text: 'Test Post Title' },
-            { languageCode: 'ru_RU', text: 'Тестовый заголовок' },
-          ],
-          description: [
-            { languageCode: 'en_US', text: 'This is a test post description.' },
-            { languageCode: 'ru_RU', text: 'Это описание тестового поста.' },
-          ],
-        };
+				expect(response.body.meta.page).toBe(2);
+				expect(response.body.meta.take).toBe(5);
+			});
+		});
+	});
 
-        const response = await request(app.getHttpServer())
-          .post('/posts')
-          .set('Authorization', `Bearer ${userToken}`)
-          .send(createPostDto)
-          .expect(HttpStatus.CREATED);
+	describe('Post Endpoints (e2e)', () => {
+		describe('POST /posts', () => {
+			it('should create a post with valid token', async () => {
+				const createPostDto = {
+					title: [
+						{ languageCode: 'en_US', text: 'Test Post Title' },
+						{ languageCode: 'ru_RU', text: 'Тестовый заголовок' },
+					],
+					description: [
+						{ languageCode: 'en_US', text: 'This is a test post description.' },
+						{ languageCode: 'ru_RU', text: 'Это описание тестового поста.' },
+					],
+				};
 
-        expect(response.body.id).toBeDefined();
-        testPostId = response.body.id;
-      });
+				const response = await request(app.getHttpServer())
+					.post('/posts')
+					.set('Authorization', `Bearer ${userToken}`)
+					.send(createPostDto)
+					.expect(HttpStatus.CREATED);
 
-      it('should reject requests without token', async () => {
-        const createPostDto = {
-          title: [{ languageCode: 'en_US', text: 'Test Title' }],
-          description: [{ languageCode: 'en_US', text: 'Test Description' }],
-        };
+				expect(response.body.id).toBeDefined();
+				testPostId = response.body.id;
+			});
 
-        await request(app.getHttpServer())
-          .post('/posts')
-          .send(createPostDto)
-          .expect(HttpStatus.UNAUTHORIZED);
-      });
+			it('should reject requests without token', async () => {
+				const createPostDto = {
+					title: [{ languageCode: 'en_US', text: 'Test Title' }],
+					description: [{ languageCode: 'en_US', text: 'Test Description' }],
+				};
 
-      it('should validate post data', async () => {
-        const invalidDto = {
-          title: [], // Empty title array
-          description: [{ languageCode: 'en_US', text: 'Description' }],
-        };
+				await request(app.getHttpServer())
+					.post('/posts')
+					.send(createPostDto)
+					.expect(HttpStatus.UNAUTHORIZED);
+			});
 
-        await request(app.getHttpServer())
-          .post('/posts')
-          .set('Authorization', `Bearer ${userToken}`)
-          .send(invalidDto)
-          .expect(HttpStatus.CREATED);
-      });
-    });
+			it('should validate post data', async () => {
+				const invalidDto = {
+					title: [], // Empty title array
+					description: [{ languageCode: 'en_US', text: 'Description' }],
+				};
 
-    describe('GET /posts/:id', () => {
-      it('should return post by id', async () => {
-        const response = await request(app.getHttpServer())
-          .get(`/posts/${testPostId}`)
-          .set('Authorization', `Bearer ${userToken}`)
-          .expect(HttpStatus.OK);
+				await request(app.getHttpServer())
+					.post('/posts')
+					.set('Authorization', `Bearer ${userToken}`)
+					.send(invalidDto)
+					.expect(HttpStatus.CREATED);
+			});
+		});
 
-        expect(response.body.id).toBe(testPostId);
-      });
+		describe('GET /posts/:id', () => {
+			it('should return post by id', async () => {
+				const response = await request(app.getHttpServer())
+					.get(`/posts/${testPostId}`)
+					.set('Authorization', `Bearer ${userToken}`)
+					.expect(HttpStatus.OK);
 
-      it('should return 404 for non-existent post', async () => {
-        const nonExistentId = '00000000-0000-4000-8000-000000000000';
+				expect(response.body.id).toBe(testPostId);
+			});
 
-        await request(app.getHttpServer())
-          .get(`/posts/${nonExistentId}`)
-          .set('Authorization', `Bearer ${userToken}`)
-          .expect(HttpStatus.NOT_FOUND);
-      });
-    });
+			it('should return 404 for non-existent post', async () => {
+				const nonExistentId = '00000000-0000-4000-8000-000000000000';
 
-    describe('GET /posts', () => {
-      it('should return paginated posts', async () => {
-        const response = await request(app.getHttpServer())
-          .get('/posts?page=1&take=10')
-          .set('Authorization', `Bearer ${userToken}`)
-          .expect(HttpStatus.OK);
+				await request(app.getHttpServer())
+					.get(`/posts/${nonExistentId}`)
+					.set('Authorization', `Bearer ${userToken}`)
+					.expect(HttpStatus.NOT_FOUND);
+			});
+		});
 
-        expect(response.body.data).toBeDefined();
-        expect(response.body.meta).toBeDefined();
-        expect(Array.isArray(response.body.data)).toBe(true);
-      });
-    });
+		describe('GET /posts', () => {
+			it('should return paginated posts', async () => {
+				const response = await request(app.getHttpServer())
+					.get('/posts?page=1&take=10')
+					.set('Authorization', `Bearer ${userToken}`)
+					.expect(HttpStatus.OK);
 
-    describe('PUT /posts/:id', () => {
-      it('should update post with valid data', async () => {
-        const updatePostDto = {
-          title: [
-            { languageCode: 'en_US', text: 'Updated Test Post Title' },
-            { languageCode: 'ru_RU', text: 'Обновленный тестовый заголовок' },
-          ],
-          description: [
-            { languageCode: 'en_US', text: 'Updated test post description.' },
-            { languageCode: 'ru_RU', text: 'Обновленное описание тестового поста.' },
-          ],
-        };
+				expect(response.body.data).toBeDefined();
+				expect(response.body.meta).toBeDefined();
+				expect(Array.isArray(response.body.data)).toBe(true);
+			});
+		});
 
-        const response = await request(app.getHttpServer())
-          .put(`/posts/${testPostId}`)
-          .set('Authorization', `Bearer ${userToken}`)
-          .send(updatePostDto)
-          .expect(HttpStatus.OK);
+		describe('PUT /posts/:id', () => {
+			it('should update post with valid data', async () => {
+				const updatePostDto = {
+					title: [
+						{ languageCode: 'en_US', text: 'Updated Test Post Title' },
+						{ languageCode: 'ru_RU', text: 'Обновленный тестовый заголовок' },
+					],
+					description: [
+						{ languageCode: 'en_US', text: 'Updated test post description.' },
+						{
+							languageCode: 'ru_RU',
+							text: 'Обновленное описание тестового поста.',
+						},
+					],
+				};
 
-        expect(response.body.id).toBe(testPostId);
-      });
+				const response = await request(app.getHttpServer())
+					.put(`/posts/${testPostId}`)
+					.set('Authorization', `Bearer ${userToken}`)
+					.send(updatePostDto)
+					.expect(HttpStatus.OK);
 
-      it('should return 404 for non-existent post', async () => {
-        const nonExistentId = '00000000-0000-4000-8000-000000000000';
-        const updateDto = {
-          title: [{ languageCode: 'en_US', text: 'Title' }],
-          description: [{ languageCode: 'en_US', text: 'Description' }],
-        };
+				expect(response.body.id).toBe(testPostId);
+			});
 
-        await request(app.getHttpServer())
-          .put(`/posts/${nonExistentId}`)
-          .set('Authorization', `Bearer ${userToken}`)
-          .send(updateDto)
-          .expect(HttpStatus.NOT_FOUND);
-      });
-    });
+			it('should return 404 for non-existent post', async () => {
+				const nonExistentId = '00000000-0000-4000-8000-000000000000';
+				const updateDto = {
+					title: [{ languageCode: 'en_US', text: 'Title' }],
+					description: [{ languageCode: 'en_US', text: 'Description' }],
+				};
 
-    describe('DELETE /posts/:id', () => {
-      it('should delete post successfully', async () => {
-        await request(app.getHttpServer())
-          .delete(`/posts/${testPostId}`)
-          .set('Authorization', `Bearer ${userToken}`)
-          .expect(HttpStatus.ACCEPTED);
-      });
+				await request(app.getHttpServer())
+					.put(`/posts/${nonExistentId}`)
+					.set('Authorization', `Bearer ${userToken}`)
+					.send(updateDto)
+					.expect(HttpStatus.NOT_FOUND);
+			});
+		});
 
-      it('should return 404 for already deleted post', async () => {
-        await request(app.getHttpServer())
-          .delete(`/posts/${testPostId}`)
-          .set('Authorization', `Bearer ${userToken}`)
-          .expect(HttpStatus.NOT_FOUND);
-      });
-    });
-  });
+		describe('DELETE /posts/:id', () => {
+			it('should delete post successfully', async () => {
+				await request(app.getHttpServer())
+					.delete(`/posts/${testPostId}`)
+					.set('Authorization', `Bearer ${userToken}`)
+					.expect(HttpStatus.ACCEPTED);
+			});
 
-  describe('Health Check Endpoint (e2e)', () => {
-    describe('GET /health', () => {
-      it('should return health status', async () => {
-        const response = await request(app.getHttpServer())
-          .get('/health')
-          .expect(HttpStatus.OK);
+			it('should return 404 for already deleted post', async () => {
+				await request(app.getHttpServer())
+					.delete(`/posts/${testPostId}`)
+					.set('Authorization', `Bearer ${userToken}`)
+					.expect(HttpStatus.NOT_FOUND);
+			});
+		});
+	});
 
-        expect(response.body.status).toBe('ok');
-      });
-    });
-  });
+	describe('Health Check Endpoint (e2e)', () => {
+		describe('GET /health', () => {
+			it('should return health status', async () => {
+				const response = await request(app.getHttpServer())
+					.get('/health')
+					.expect(HttpStatus.OK);
+
+				expect(response.body.status).toBe('ok');
+			});
+		});
+	});
 });

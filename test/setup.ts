@@ -9,10 +9,10 @@ global.console.warn = jest.fn();
 // Mock import.meta for Jest environment
 // @ts-ignore
 globalThis.import = {
-  meta: {
-    dirname: path.join(__dirname, '../src'),
-    url: `file://${path.join(__dirname, '../src')}`,
-  },
+	meta: {
+		dirname: path.join(__dirname, '../src'),
+		url: `file://${path.join(__dirname, '../src')}`,
+	},
 };
 
 // Set test environment variables
@@ -69,9 +69,15 @@ process.env.NATS_ENABLED = 'false';
 process.env.PORT = '3000';
 
 // Mock path utility for cross-environment compatibility
-jest.mock('../src/common/utils/path.util.ts', () => ({
-  getCurrentDirname: jest.fn().mockReturnValue(path.join(__dirname, '../src')),
-}), { virtual: true });
+jest.mock(
+	'../src/common/utils/path.util.ts',
+	() => ({
+		getCurrentDirname: jest
+			.fn()
+			.mockReturnValue(path.join(__dirname, '../src')),
+	}),
+	{ virtual: true },
+);
 
 // Increase test timeout for E2E tests
 jest.setTimeout(30000);

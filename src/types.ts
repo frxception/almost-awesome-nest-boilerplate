@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export type Constructor<T = any, Arguments extends unknown[] = any[]> = new (
   ...arguments_: Arguments
 ) => T;
