@@ -34,6 +34,10 @@ npm run start:dev
 # Build
 npm run build:prod
 
+# Code quality (choose one)
+npm run biome:check:fix     # Fast Biome formatting + linting
+npm run lint:fix           # Traditional ESLint
+
 # Database operations
 npm run db:seed
 npm run db:push
@@ -51,6 +55,10 @@ pnpm start:dev
 
 # Build
 pnpm build:prod
+
+# Code quality (choose one)
+pnpm biome:check:fix     # Fast Biome formatting + linting
+pnpm lint:fix            # Traditional ESLint
 
 # Database operations
 pnpm db:seed
@@ -70,6 +78,10 @@ yarn start:dev
 # Build
 yarn build:prod
 
+# Code quality (choose one)
+yarn biome:check:fix     # Fast Biome formatting + linting
+yarn lint:fix            # Traditional ESLint
+
 # Database operations
 yarn db:seed
 yarn db:push
@@ -87,6 +99,10 @@ bun start:dev:bun
 
 # Build
 bun build:bun
+
+# Code quality (choose one)
+bun biome:check:fix     # Fast Biome formatting + linting
+bun lint:fix            # Traditional ESLint
 
 # Database operations
 bun db:seed
@@ -263,7 +279,7 @@ Deno provides security by default, built-in TypeScript support, and modern web A
   <dd>Multi-language support with English and Russian translations.</dd>
 
   <dt><b>🔍 Code Quality</b></dt>
-  <dd>ESLint, Prettier, and Husky pre-commit hooks for consistent code quality.</dd>
+  <dd>Biome (fast Rust-based linter/formatter), ESLint, Prettier, and Husky pre-commit hooks for consistent code quality.</dd>
 
   <dt><b>🏗️ Environment Configuration</b></dt>
   <dd>Separate configurations for development, staging, and production environments.</dd>

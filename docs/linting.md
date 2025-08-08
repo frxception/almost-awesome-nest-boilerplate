@@ -4,12 +4,17 @@ This guide covers the linting, formatting, and code quality tools used in the Al
 
 - [Linting and Code Quality](#linting-and-code-quality)
   - [Overview](#overview)
+  - [Biome Configuration](#biome-configuration)
+    - [Installation](#installation)
+    - [Configuration File](#configuration-file)
+    - [Available Commands](#available-commands)
+    - [VS Code Integration](#vs-code-integration)
   - [ESLint Configuration](#eslint-configuration)
     - [Installed Plugins](#installed-plugins)
-    - [Configuration File](#configuration-file)
+    - [Configuration File](#configuration-file-1)
     - [Custom Rules](#custom-rules)
   - [Prettier Configuration](#prettier-configuration)
-    - [Configuration File](#configuration-file-1)
+    - [Configuration File](#configuration-file-2)
     - [Integration with ESLint](#integration-with-eslint)
   - [TypeScript Configuration](#typescript-configuration)
     - [Compiler Options](#compiler-options)
@@ -43,11 +48,149 @@ This guide covers the linting, formatting, and code quality tools used in the Al
 
 The project uses a comprehensive linting and formatting setup to ensure code quality:
 
-- **ESLint**: JavaScript/TypeScript linting with multiple plugins
+- **Biome**: Fast, modern formatter and linter with zero configuration
+- **ESLint**: JavaScript/TypeScript linting with multiple plugins  
 - **Prettier**: Code formatting for consistent style
 - **TypeScript**: Strict type checking
 - **Husky**: Git hooks for automated quality checks
 - **Lint-staged**: Run linters on staged files only
+
+You can use either **Biome** (recommended for speed) or **ESLint + Prettier** (traditional setup) based on your preference.
+
+## Biome Configuration
+
+[Biome](https://biomejs.dev/) is a fast formatter, linter, and more for JavaScript, TypeScript, JSX, TSX, and JSON. It's designed to be a one-stop solution that can replace ESLint, Prettier, and other tools with superior performance.
+
+### Installation
+
+Biome is already installed as a dev dependency:
+
+```json
+{
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4"
+  }
+}
+```
+
+### Configuration File
+
+**`biome.json`** (if you have one):
+
+```json
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 80
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "all",
+      "semicolons": "always"
+    }
+  },
+  "files": {
+    "ignore": [
+      "dist/**",
+      "node_modules/**",
+      "coverage/**",
+      ".vuepress/**"
+    ]
+  }
+}
+```
+
+### Available Commands
+
+```bash
+# Format files with Biome
+npm run biome:format              # or pnpm/yarn/bun equivalent
+
+# Check formatting without making changes
+npm run biome:format:check        # or pnpm/yarn/bun equivalent
+
+# Run linter
+npm run biome:lint                # or pnpm/yarn/bun equivalent
+
+# Run linter with auto-fix
+npm run biome:lint:fix            # or pnpm/yarn/bun equivalent
+
+# Run both linter and formatter
+npm run biome:check               # or pnpm/yarn/bun equivalent
+
+# Run with auto-fix and formatting
+npm run biome:check:fix           # or pnpm/yarn/bun equivalent
+
+# Check all files (including ignored)
+npm run biome:check:all           # or pnpm/yarn/bun equivalent
+
+# Check all files with fixes and formatting
+npm run biome:check:all:write:fix # or pnpm/yarn/bun equivalent
+```
+
+**Package.json scripts**:
+
+```json
+{
+  "scripts": {
+    "biome:format": "biome format --write .",
+    "biome:format:check": "biome format --check .",
+    "biome:lint": "biome lint .",
+    "biome:lint:fix": "biome lint --fix .",
+    "biome:check": "biome check .",
+    "biome:check:fix": "biome check --fix .",
+    "biome:check:all": "biome check --all .",
+    "biome:check:all:write:fix": "biome check --all --write --fix ."
+  }
+}
+```
+
+### VS Code Integration
+
+Install the [Biome VS Code extension](https://marketplace.visualstudio.com/items?itemName=biomejs.biome) for the best experience.
+
+**`.vscode/settings.json`**:
+
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.codeActionsOnSave": {
+    "quickfix.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
+}
+```
+
+**Benefits of Biome:**
+- ⚡ **30x faster** than ESLint + Prettier
+- 🛠️ **Zero configuration** required
+- 🎯 **One tool** for formatting and linting
+- 📦 **Smaller bundle size** than ESLint ecosystem
+- 🔧 **Better error messages** with suggested fixes
+- 🚀 **Native binary** written in Rust
 
 ## ESLint Configuration
 
@@ -322,37 +465,71 @@ This configuration:
 
 ## Available Scripts
 
+### Biome Scripts (Recommended)
+
 ```bash
-# Run ESLint on all files
-yarn lint
+# Format files with Biome
+<pm> biome:format              # Fast formatting
 
-# Run ESLint with auto-fix
-yarn lint:fix
+# Check formatting without making changes
+<pm> biome:format:check        # Check formatting
 
-# Check Prettier formatting
-yarn prettier:check
+# Run linter
+<pm> biome:lint                # Fast linting
 
-# Format code with Prettier
-yarn prettier:write
+# Run linter with auto-fix
+<pm> biome:lint:fix            # Fix linting issues
 
-# Run TypeScript compiler check
-yarn type-check
+# Run both linter and formatter
+<pm> biome:check               # Check everything
 
-# Run all quality checks
-yarn quality:check
+# Run with auto-fix and formatting
+<pm> biome:check:fix           # Fix and format
+
+# Check all files (including ignored)
+<pm> biome:check:all           # Check all files
+
+# Check all files with fixes and formatting  
+<pm> biome:check:all:write:fix # Fix all files
 ```
 
-**Package.json scripts**:
+### ESLint + Prettier Scripts (Traditional)
+
+```bash
+# Run ESLint on all files
+<pm> lint
+
+# Run ESLint with auto-fix
+<pm> lint:fix
+
+# Check Prettier formatting
+<pm> prettier:check
+
+# Format code with Prettier
+<pm> prettier:write
+
+# Run TypeScript compiler check
+<pm> type-check
+
+# Run all quality checks
+<pm> quality:check
+```
+
+**Package.json scripts** (replace `<pm>` with your package manager):
 
 ```json
 {
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "prettier:check": "prettier --check \"src/**/*.ts\"",
-    "prettier:write": "prettier --write \"src/**/*.ts\"",
-    "type-check": "tsc --noEmit",
-    "quality:check": "yarn lint && yarn prettier:check && yarn type-check"
+    "biome:format": "biome format --write .",
+    "biome:format:check": "biome format --check .",
+    "biome:lint": "biome lint .",
+    "biome:lint:fix": "biome lint --fix .",
+    "biome:check": "biome check .",
+    "biome:check:fix": "biome check --fix .",
+    "biome:check:all": "biome check --all .",
+    "biome:check:all:write:fix": "biome check --all --write --fix ."
   }
 }
 ```
@@ -360,6 +537,46 @@ yarn quality:check
 ## IDE Integration
 
 ### VS Code Setup
+
+#### Option 1: Biome (Recommended)
+
+**`.vscode/settings.json`**:
+
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.codeActionsOnSave": {
+    "quickfix.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "typescript.preferences.importModuleSpecifier": "relative"
+}
+```
+
+**`.vscode/extensions.json`**:
+
+```json
+{
+  "recommendations": [
+    "biomejs.biome",
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-json"
+  ]
+}
+```
+
+#### Option 2: ESLint + Prettier (Traditional)
 
 **`.vscode/settings.json`**:
 
@@ -380,7 +597,13 @@ yarn quality:check
 
 ```json
 {
-  "recommendations": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint", "ms-vscode.vscode-typescript-next", "bradlc.vscode-tailwindcss", "ms-vscode.vscode-json"]
+  "recommendations": [
+    "esbenp.prettier-vscode", 
+    "dbaeumer.vscode-eslint", 
+    "ms-vscode.vscode-typescript-next", 
+    "bradlc.vscode-tailwindcss", 
+    "ms-vscode.vscode-json"
+  ]
 }
 ```
 
