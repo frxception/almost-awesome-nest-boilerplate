@@ -1,0 +1,15 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Almost Awesome NestJS Boilerplate DB",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "nest_boilerplate",
+      "Username": "postgres",
+      "Password": "postgres",
+      "SSLMode": "prefer",
+      "Favorite": true
+    }
+  }
+}
