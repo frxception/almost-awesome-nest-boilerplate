@@ -4,10 +4,10 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import type { RoleType } from '../../constants/role-type.ts';
 import { TokenType } from '../../constants/token-type.ts';
-import type { ApiConfigService } from '../../shared/services/api-config.service.ts';
+import { ApiConfigService } from '../../shared/services/api-config.service.ts';
 import type { Uuid } from '../../types.ts';
 import type { User } from '../user/types/user.type.ts';
-import type { UserService } from '../user/user.service.ts';
+import { UserService } from '../user/user.service.ts';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

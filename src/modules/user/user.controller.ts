@@ -7,12 +7,12 @@ import { ApiPageResponse } from '../../decorators/api-page-response.decorator.ts
 import { AuthUser } from '../../decorators/auth-user.decorator.ts';
 import { ApiUUIDParam, Auth, UUIDParam } from '../../decorators/http.decorators.ts';
 import { UseLanguageInterceptor } from '../../interceptors/language-interceptor.service.ts';
-import type { TranslationService } from '../../shared/services/translation.service.ts';
+import { TranslationService } from '../../shared/services/translation.service.ts';
 import type { Uuid } from '../../types.ts';
 import { UserDto } from './dtos/user.dto.ts';
 import type { UsersPageOptionsDto } from './dtos/users-page-options.dto.ts';
 import type { User } from './types/user.type.ts';
-import type { UserService } from './user.service.ts';
+import { UserService } from './user.service.ts';
 
 @Controller('users')
 @ApiTags('users')

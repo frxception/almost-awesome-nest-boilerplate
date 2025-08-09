@@ -43,7 +43,7 @@ import { SharedModule } from './shared/shared.module.ts';
       useFactory: (configService: ApiConfigService) => ({
         fallbackLanguage: configService.fallbackLanguage,
         loaderOptions: {
-          path: path.join(getCurrentDirname(), 'i18n/'),
+          path: path.join(process.cwd(), 'src', 'i18n'),
           watch: configService.isDevelopment,
         },
       }),

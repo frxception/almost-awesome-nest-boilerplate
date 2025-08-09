@@ -2,7 +2,7 @@ import type { IQueryHandler } from '@nestjs/cqrs';
 import { QueryHandler } from '@nestjs/cqrs';
 import { eq } from 'drizzle-orm';
 
-import type { DrizzleService } from '../../../database/drizzle.service.ts';
+import { DrizzleService } from '../../../database/drizzle.service.ts';
 import { posts } from '../../../database/schema/post.ts';
 import type { Post } from '../types/post.type.ts';
 import { GetPostQuery } from './get-post.query.ts';

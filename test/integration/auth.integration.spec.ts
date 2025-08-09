@@ -12,6 +12,8 @@ import {
 	UserLoginDtoFactory,
 	UserRegisterDtoFactory,
 } from '../factories/index.ts';
+import { RoleType } from '../../src/constants/role-type.ts';
+import { Uuid } from '../../src/types.ts';
 
 describe('Auth Module Integration', () => {
 	let module: TestingModule;
@@ -60,15 +62,15 @@ describe('Auth Module Integration', () => {
 	describe('Token Generation', () => {
 		it('should create valid JWT tokens', async () => {
 			// Arrange
-			const payload = { userId: 'test-user-id', role: 'USER' as const };
+			const payload = { userId: 'test-user-id', role: RoleType.USER as RoleType};
 
 			// Act
-			const tokenResult = await authService.createAccessToken(payload);
+			const tokenResult = await authService.createAccessToken(payload as { role: RoleType; userId: Uuid });
 
 			// Assert
-			expect(tokenResult.accessToken).toBeDefined();
+			expect(tokenResult.token).toBeDefined();
 			expect(tokenResult.expiresIn).toBe(3600);
-			expect(typeof tokenResult.accessToken).toBe('string');
+			expect(typeof tokenResult.token).toBe('string');
 		});
 	});
 });

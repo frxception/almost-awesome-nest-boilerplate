@@ -1,5 +1,6 @@
 import type { Provider } from '@nestjs/common';
 import { Global, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import { ApiConfigService } from './services/api-config.service.ts';
@@ -13,7 +14,7 @@ const providers: Provider[] = [ApiConfigService, ValidatorService, AwsS3Service,
 @Global()
 @Module({
   providers,
-  imports: [CqrsModule],
+  imports: [ConfigModule, CqrsModule],
   exports: [...providers, CqrsModule],
 })
 export class SharedModule {}

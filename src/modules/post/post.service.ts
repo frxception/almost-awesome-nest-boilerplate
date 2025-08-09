@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import type { CommandBus } from '@nestjs/cqrs';
+import { CommandBus } from '@nestjs/cqrs';
 import { asc, desc, eq, sql } from 'drizzle-orm';
 
 import type { PageDto } from '../../common/dto/page.dto.ts';
 import { Order } from '../../constants/order.ts';
-import type { DrizzleService } from '../../database/drizzle.service.ts';
+import { DrizzleService } from '../../database/drizzle.service.ts';
 import { posts } from '../../database/schema/post.ts';
 import type { Uuid } from '../../types.ts';
 import { CreatePostCommand } from './commands/create-post.command.ts';

@@ -2,7 +2,7 @@ import type { ICommandHandler } from '@nestjs/cqrs';
 import { CommandHandler } from '@nestjs/cqrs';
 
 import type { LanguageCode } from '../../../constants/language-code.ts';
-import type { DrizzleService } from '../../../database/drizzle.service.ts';
+import { DrizzleService } from '../../../database/drizzle.service.ts';
 import { posts, postTranslations } from '../../../database/schema/post.ts';
 import type { Post } from '../types/post.type.ts';
 import type { PostTranslation } from '../types/post-translation.type.ts';

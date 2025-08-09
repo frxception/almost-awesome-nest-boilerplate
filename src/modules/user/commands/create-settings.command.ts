@@ -1,7 +1,7 @@
 import type { ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { CommandHandler } from '@nestjs/cqrs';
 
-import type { DrizzleService } from '../../../database/drizzle.service.ts';
+import { DrizzleService } from '../../../database/drizzle.service.ts';
 import { userSettings } from '../../../database/schema/user.ts';
 import type { Uuid } from '../../../types.ts';
 import type { CreateSettingsDto } from '../dtos/create-settings.dto.ts';
