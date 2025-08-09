@@ -102,14 +102,16 @@ describe('PostController', () => {
       // Arrange
       const postId = 'test-post-id';
       const updatePostDto = UpdatePostDtoFactory.create();
+      const existingPost = PostFactory.create({ id: postId });
 
-      mockPostService.updatePost.mockResolvedValue(undefined);
+      mockPostService.updatePost.mockResolvedValue(existingPost);
 
       // Act
       const result = await controller.updatePost(postId as Uuid, updatePostDto);
 
       // Assert
-      expect(result).toBeUndefined(); // updatePost returns void
+      expect(result).toBeInstanceOf(PostDto);
+      expect(result.id).toBe(postId);
       expect(mockPostService.updatePost).toHaveBeenCalledWith(postId, updatePostDto);
     });
   });

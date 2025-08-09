@@ -1,8 +1,6 @@
 import type { ApiPropertyOptions } from '@nestjs/swagger';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { getVariableName } from '../common/utils.ts';
-
 export function ApiBooleanProperty(options: Omit<ApiPropertyOptions, 'type'> = {}): PropertyDecorator {
   return ApiProperty({ type: Boolean, ...(options as ApiPropertyOptions) });
 }
@@ -30,7 +28,6 @@ export function ApiUUIDPropertyOptional(
   return ApiUUIDProperty({ required: false, ...options });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function ApiEnumProperty<TEnum>(
   getEnum: () => TEnum,
   options: Omit<ApiPropertyOptions, 'type'> & { each?: boolean } = {},
@@ -41,12 +38,10 @@ export function ApiEnumProperty<TEnum>(
     // throw error during the compilation of swagger
     // isArray: options.each,
     enum: enumValue as unknown as TEnum,
-    enumName: getVariableName(getEnum),
     ...(options as ApiPropertyOptions),
   } as ApiPropertyOptions);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function ApiEnumPropertyOptional<TEnum>(
   getEnum: () => TEnum,
   options: Omit<ApiPropertyOptions, 'type' | 'required'> & {

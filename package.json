@@ -180,11 +180,6 @@
     "transformIgnorePatterns": [
       "node_modules/(?!(parse-duration)/)"
     ],
-    "globals": {
-      "ts-jest": {
-        "useESM": true
-      }
-    },
     "moduleNameMapper": {
       "^(\\.{1,2}/.*)\\.js$": "$1"
     },

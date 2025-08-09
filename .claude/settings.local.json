@@ -1,21 +1,23 @@
 {
-	"permissions": {
-		"allow": [
-			"Bash(npm run lint)",
-			"Bash(npm run lint:*)",
-			"Bash(npm run start:dev:*)",
-			"Bash(brew services:*)",
-			"Bash(docker-compose up:*)",
-			"Bash(pkill:*)",
-			"Bash(true)",
-			"Bash(yarn start:dev)",
-			"Bash(curl:*)",
-			"Bash(lsof:*)",
-			"Bash(node:*)",
-			"Bash(yarn test)",
-			"Bash(yarn test:e2e)",
-			"Bash(docker-compose:*)"
-		],
-		"deny": []
-	}
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run start:dev:*)",
+      "Bash(brew services:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "Bash(yarn start:dev)",
+      "Bash(curl:*)",
+      "Bash(lsof:*)",
+      "Bash(node:*)",
+      "Bash(yarn test)",
+      "Bash(yarn test:e2e)",
+      "Bash(docker-compose:*)",
+      "Bash(yarn test:*)",
+      "Bash(grep:*)"
+    ],
+    "deny": []
+  }
 }

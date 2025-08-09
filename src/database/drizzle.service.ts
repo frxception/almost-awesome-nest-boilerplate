@@ -14,10 +14,10 @@ export class DrizzleService implements OnModuleDestroy {
   ) {}
 
   get database(): NodePgDatabase<typeof schema> {
-    return this.db;
+    return this._db;
   }
 
   async onModuleDestroy() {
-    await this.pool.end();
+    await this._pool.end();
   }
 }

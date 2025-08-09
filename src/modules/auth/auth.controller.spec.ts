@@ -84,7 +84,6 @@ describe('AuthController', () => {
 			expect(result).toBeInstanceOf(UserDto);
 			expect(mockUserService.createUser).toHaveBeenCalledWith(
 				userRegisterDto,
-				undefined,
 			);
 		});
 	});
