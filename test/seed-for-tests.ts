@@ -2,12 +2,7 @@ import { hash } from 'bcrypt';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
-import {
-  posts,
-  postTranslations,
-  users,
-  userSettings,
-} from '../src/database/schema/index.ts';
+import { posts, postTranslations, users, userSettings } from '../src/database/schema';
 
 // Database connection for tests
 const connectionString = `postgres://${process.env.DB_USERNAME || 'postgres'}:${process.env.DB_PASSWORD || 'postgres'}@${process.env.DB_HOST || 'localhost'}:${process.env.DB_PORT || 5432}/${process.env.DB_DATABASE || 'nest_boilerplate'}`;
@@ -74,18 +69,12 @@ async function seedForTests() {
       isPhoneVerified: index % 3 === 0,
     }));
 
-    const insertedSettings = await db
-      .insert(userSettings)
-      .values(userSettingsData)
-      .returning();
+    const insertedSettings = await db.insert(userSettings).values(userSettingsData).returning();
     console.log(`✅ Created ${insertedSettings.length} user settings`);
 
     // Create a few posts
     console.log('📝 Creating posts...');
-    const postData = [
-      { userId: insertedUsers[0]!.id },
-      { userId: insertedUsers[1]!.id },
-    ];
+    const postData = [{ userId: insertedUsers[0]!.id }, { userId: insertedUsers[1]!.id }];
 
     const insertedPosts = await db.insert(posts).values(postData).returning();
     console.log(`✅ Created ${insertedPosts.length} posts`);
@@ -107,10 +96,7 @@ async function seedForTests() {
       },
     ];
 
-    const insertedTranslations = await db
-      .insert(postTranslations)
-      .values(translationData)
-      .returning();
+    const insertedTranslations = await db.insert(postTranslations).values(translationData).returning();
     console.log(`✅ Created ${insertedTranslations.length} post translations`);
 
     console.log('🎉 Database seeding for tests completed successfully!');

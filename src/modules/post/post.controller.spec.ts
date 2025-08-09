@@ -1,20 +1,14 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import {
-  CreatePostDtoFactory,
-  PostFactory,
-  UpdatePostDtoFactory,
-  UserFactory,
-} from '../../../test/factories/index.ts';
-import { mockPostService } from '../../../test/mocks/services.mock.ts';
-import { PageMetaDto } from '../../common/dto/page-meta.dto.ts';
-import { PageDto } from '../../common/dto/page.dto.ts';
-import { PostPageOptionsDto } from './dtos/post-page-options.dto.ts';
-import { PostDto } from './dtos/post.dto.ts';
-import { PostController } from './post.controller.ts';
-import { PostService } from './post.service.ts';
-import { Uuid } from '../../types.ts';
-import { User } from '../user/types/user.type.ts';
+import { CreatePostDtoFactory, PostFactory, UpdatePostDtoFactory, UserFactory } from '../../../test/factories';
+import { mockPostService } from '../../../test/mocks/services.mock';
+import { PageMetaDto } from '../../common/dto/page-meta.dto';
+import { PageDto } from '../../common/dto/page.dto';
+import { PostPageOptionsDto } from './dtos/post-page-options.dto';
+import { PostDto } from './dtos/post.dto';
+import { PostController } from './post.controller';
+import { PostService } from './post.service';
+import { Uuid } from '../../types';
 
 describe('PostController', () => {
   let controller: PostController;
