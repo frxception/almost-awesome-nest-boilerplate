@@ -13,9 +13,6 @@ export class GetPostHandler implements IQueryHandler<GetPostQuery, Post[]> {
 
   // biome-ignore lint/suspicious/useAwait: <explanation>
   async execute(query: GetPostQuery): Promise<Post[]> {
-    return this.drizzleService.database
-      .select()
-      .from(posts)
-      .where(eq(posts.userId, query.userId));
+    return this.drizzleService.database.select().from(posts).where(eq(posts.userId, query.userId));
   }
 }

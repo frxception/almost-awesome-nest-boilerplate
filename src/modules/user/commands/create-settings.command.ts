@@ -15,9 +15,7 @@ export class CreateSettingsCommand implements ICommand {
 }
 
 @CommandHandler(CreateSettingsCommand)
-export class CreateSettingsHandler
-  implements ICommandHandler<CreateSettingsCommand, UserSettings>
-{
+export class CreateSettingsHandler implements ICommandHandler<CreateSettingsCommand, UserSettings> {
   constructor(private drizzleService: DrizzleService) {}
 
   async execute(command: CreateSettingsCommand): Promise<UserSettings> {

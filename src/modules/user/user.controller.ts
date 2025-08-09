@@ -1,22 +1,11 @@
-import {
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Query,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, ValidationPipe } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { PageDto } from '../../common/dto/page.dto.ts';
 import { RoleType } from '../../constants/role-type.ts';
 import { ApiPageResponse } from '../../decorators/api-page-response.decorator.ts';
 import { AuthUser } from '../../decorators/auth-user.decorator.ts';
-import {
-  ApiUUIDParam,
-  Auth,
-  UUIDParam,
-} from '../../decorators/http.decorators.ts';
+import { ApiUUIDParam, Auth, UUIDParam } from '../../decorators/http.decorators.ts';
 import { UseLanguageInterceptor } from '../../interceptors/language-interceptor.service.ts';
 import type { TranslationService } from '../../shared/services/translation.service.ts';
 import type { Uuid } from '../../types.ts';
@@ -38,9 +27,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @UseLanguageInterceptor()
   async admin(@AuthUser() user: User) {
-    const translation = await this.translationService.translate(
-      'admin.keywords.admin',
-    );
+    const translation = await this.translationService.translate('admin.keywords.admin');
 
     return {
       text: `${translation} ${user.firstName}`,

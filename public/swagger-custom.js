@@ -9,32 +9,32 @@ window.addEventListener('load', () => setTimeout(initializeQuickStart, 1000));
 
 // Also try every 500ms for up to 10 seconds
 const initInterval = setInterval(() => {
-	initAttempts++;
-	if (initAttempts > maxAttempts) {
-		clearInterval(initInterval);
-		return;
-	}
-	initializeQuickStart();
+  initAttempts++;
+  if (initAttempts > maxAttempts) {
+    clearInterval(initInterval);
+    return;
+  }
+  initializeQuickStart();
 }, 500);
 
 function initializeQuickStart() {
-	// Check if already initialized
-	if (document.getElementById('quickstart-container')) {
-		clearInterval(initInterval);
-		return;
-	}
+  // Check if already initialized
+  if (document.getElementById('quickstart-container')) {
+    clearInterval(initInterval);
+    return;
+  }
 
-	// Find the description container and inject our interactive UI
-	const descriptionContainer = document.querySelector(
-		'.description, .info .description, .swagger-ui .info .description',
-	);
-	if (!descriptionContainer) {
-		return;
-	}
-	clearInterval(initInterval);
+  // Find the description container and inject our interactive UI
+  const descriptionContainer = document.querySelector(
+    '.description, .info .description, .swagger-ui .info .description',
+  );
+  if (!descriptionContainer) {
+    return;
+  }
+  clearInterval(initInterval);
 
-	// Create the interactive quick start HTML
-	const quickStartHTML = `
+  // Create the interactive quick start HTML
+  const quickStartHTML = `
     <div id="quickstart-container" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border: 2px solid #007bff;">
       <h2 style="color: #007bff; margin-top: 0;">🚀 Interactive Quick Start Guide</h2>
       
@@ -79,265 +79,260 @@ function initializeQuickStart() {
     </div>
   `;
 
-	// Insert the interactive UI at the beginning of the description
-	descriptionContainer.innerHTML =
-		quickStartHTML + descriptionContainer.innerHTML;
+  // Insert the interactive UI at the beginning of the description
+  descriptionContainer.innerHTML = quickStartHTML + descriptionContainer.innerHTML;
 
-	// Add event listeners after DOM is updated
-	setupEventListeners();
+  // Add event listeners after DOM is updated
+  setupEventListeners();
 }
 
 function setupEventListeners() {
-	// Register button
-	const registerBtn = document.getElementById('register-btn');
-	if (registerBtn) {
-		registerBtn.addEventListener('click', handleRegisterUser);
-	}
+  // Register button
+  const registerBtn = document.getElementById('register-btn');
+  if (registerBtn) {
+    registerBtn.addEventListener('click', handleRegisterUser);
+  }
 
-	// Login button
-	const loginBtn = document.getElementById('login-btn');
-	if (loginBtn) {
-		loginBtn.addEventListener('click', handleLoginUser);
-	}
+  // Login button
+  const loginBtn = document.getElementById('login-btn');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', handleLoginUser);
+  }
 
-	// Authorize button
-	const authorizeBtn = document.getElementById('authorize-btn');
-	if (authorizeBtn) {
-		authorizeBtn.addEventListener('click', handleAuthorizeSwagger);
-	}
+  // Authorize button
+  const authorizeBtn = document.getElementById('authorize-btn');
+  if (authorizeBtn) {
+    authorizeBtn.addEventListener('click', handleAuthorizeSwagger);
+  }
 }
 
 async function handleRegisterUser() {
-	const firstName = document.getElementById('firstName').value;
-	const lastName = document.getElementById('lastName').value;
-	const email = document.getElementById('regEmail').value;
-	const password = document.getElementById('regPassword').value;
+  const firstName = document.getElementById('firstName').value;
+  const lastName = document.getElementById('lastName').value;
+  const email = document.getElementById('regEmail').value;
+  const password = document.getElementById('regPassword').value;
 
-	if (!firstName || !lastName || !email || !password) {
-		alert('Please fill in all fields');
-		return;
-	}
+  if (!firstName || !lastName || !email || !password) {
+    alert('Please fill in all fields');
+    return;
+  }
 
-	// Show loading state
-	const button = document.getElementById('register-btn');
-	const originalText = button.innerHTML;
-	button.innerHTML = '⏳ Registering...';
-	button.disabled = true;
+  // Show loading state
+  const button = document.getElementById('register-btn');
+  const originalText = button.innerHTML;
+  button.innerHTML = '⏳ Registering...';
+  button.disabled = true;
 
-	try {
-		const response = await fetch('/auth/register', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				firstName,
-				lastName,
-				email,
-				password,
-			}),
-		});
+  try {
+    const response = await fetch('/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        password,
+      }),
+    });
 
-		const result = document.getElementById('step1-result');
+    const result = document.getElementById('step1-result');
 
-		if (response.ok) {
-			const data = await response.json();
-			result.style.display = 'block';
-			result.style.background = '#d4edda';
-			result.style.color = '#155724';
-			result.style.border = '1px solid #c3e6cb';
-			result.innerHTML = `✅ <strong>User registered successfully!</strong><br>
+    if (response.ok) {
+      const data = await response.json();
+      result.style.display = 'block';
+      result.style.background = '#d4edda';
+      result.style.color = '#155724';
+      result.style.border = '1px solid #c3e6cb';
+      result.innerHTML = `✅ <strong>User registered successfully!</strong><br>
         User ID: ${data.id}<br>
         Email: ${data.email}<br>
         <em>Now proceed to Step 2 to login.</em>`;
 
-			// Auto-fill login form
-			document.getElementById('loginEmail').value = email;
-			document.getElementById('loginPassword').value = password;
-		} else {
-			const error = await response.json();
-			result.style.display = 'block';
-			result.style.background = '#f8d7da';
-			result.style.color = '#721c24';
-			result.style.border = '1px solid #f5c6cb';
-			result.innerHTML = `❌ <strong>Registration failed:</strong><br>${error.message || 'Unknown error'}`;
-		}
-	} catch (error) {
-		const result = document.getElementById('step1-result');
-		result.style.display = 'block';
-		result.style.background = '#f8d7da';
-		result.style.color = '#721c24';
-		result.style.border = '1px solid #f5c6cb';
-		result.innerHTML = `❌ <strong>Network error:</strong><br>${error.message}`;
-	} finally {
-		// Reset button
-		button.innerHTML = originalText;
-		button.disabled = false;
-	}
+      // Auto-fill login form
+      document.getElementById('loginEmail').value = email;
+      document.getElementById('loginPassword').value = password;
+    } else {
+      const error = await response.json();
+      result.style.display = 'block';
+      result.style.background = '#f8d7da';
+      result.style.color = '#721c24';
+      result.style.border = '1px solid #f5c6cb';
+      result.innerHTML = `❌ <strong>Registration failed:</strong><br>${error.message || 'Unknown error'}`;
+    }
+  } catch (error) {
+    const result = document.getElementById('step1-result');
+    result.style.display = 'block';
+    result.style.background = '#f8d7da';
+    result.style.color = '#721c24';
+    result.style.border = '1px solid #f5c6cb';
+    result.innerHTML = `❌ <strong>Network error:</strong><br>${error.message}`;
+  } finally {
+    // Reset button
+    button.innerHTML = originalText;
+    button.disabled = false;
+  }
 }
 
 async function handleLoginUser() {
-	const email = document.getElementById('loginEmail').value;
-	const password = document.getElementById('loginPassword').value;
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
 
-	if (!email || !password) {
-		alert('Please fill in both email and password');
-		return;
-	}
+  if (!email || !password) {
+    alert('Please fill in both email and password');
+    return;
+  }
 
-	// Show loading state
-	const button = document.getElementById('login-btn');
-	const originalText = button.innerHTML;
-	button.innerHTML = '⏳ Logging in...';
-	button.disabled = true;
+  // Show loading state
+  const button = document.getElementById('login-btn');
+  const originalText = button.innerHTML;
+  button.innerHTML = '⏳ Logging in...';
+  button.disabled = true;
 
-	try {
-		const response = await fetch('/auth/login', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				email,
-				password,
-			}),
-		});
+  try {
+    const response = await fetch('/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
 
-		const result = document.getElementById('step2-result');
+    const result = document.getElementById('step2-result');
 
-		if (response.ok) {
-			const data = await response.json();
-			currentToken = data.accessToken.token;
+    if (response.ok) {
+      const data = await response.json();
+      currentToken = data.accessToken.token;
 
-			result.style.display = 'block';
-			result.style.background = '#d1ecf1';
-			result.style.color = '#0c5460';
-			result.style.border = '1px solid #bee5eb';
-			result.innerHTML = `✅ <strong>Login successful!</strong><br>
+      result.style.display = 'block';
+      result.style.background = '#d1ecf1';
+      result.style.color = '#0c5460';
+      result.style.border = '1px solid #bee5eb';
+      result.innerHTML = `✅ <strong>Login successful!</strong><br>
         Token expires in: ${data.accessToken.expiresIn} seconds<br>
         <em>Token captured! Ready for Step 3.</em>`;
 
-			// Display token
-			const tokenDisplay = document.getElementById('jwt-token-display');
-			tokenDisplay.style.color = '#000';
-			tokenDisplay.style.background = '#f8f9fa';
-			tokenDisplay.style.fontSize = '12px';
-			tokenDisplay.innerHTML = currentToken;
+      // Display token
+      const tokenDisplay = document.getElementById('jwt-token-display');
+      tokenDisplay.style.color = '#000';
+      tokenDisplay.style.background = '#f8f9fa';
+      tokenDisplay.style.fontSize = '12px';
+      tokenDisplay.innerHTML = currentToken;
 
-			// Enable authorize button
-			const authorizeBtn = document.getElementById('authorize-btn');
-			authorizeBtn.disabled = false;
-			authorizeBtn.style.background = '#28a745';
-			authorizeBtn.style.color = 'white';
-			authorizeBtn.innerHTML = '🔓 Auto-Authorize Swagger UI';
-		} else {
-			const error = await response.json();
-			result.style.display = 'block';
-			result.style.background = '#f8d7da';
-			result.style.color = '#721c24';
-			result.style.border = '1px solid #f5c6cb';
-			result.innerHTML = `❌ <strong>Login failed:</strong><br>${error.message || 'Unknown error'}`;
-		}
-	} catch (error) {
-		const result = document.getElementById('step2-result');
-		result.style.display = 'block';
-		result.style.background = '#f8d7da';
-		result.style.color = '#721c24';
-		result.style.border = '1px solid #f5c6cb';
-		result.innerHTML = `❌ <strong>Network error:</strong><br>${error.message}`;
-	} finally {
-		// Reset button
-		button.innerHTML = originalText;
-		button.disabled = false;
-	}
+      // Enable authorize button
+      const authorizeBtn = document.getElementById('authorize-btn');
+      authorizeBtn.disabled = false;
+      authorizeBtn.style.background = '#28a745';
+      authorizeBtn.style.color = 'white';
+      authorizeBtn.innerHTML = '🔓 Auto-Authorize Swagger UI';
+    } else {
+      const error = await response.json();
+      result.style.display = 'block';
+      result.style.background = '#f8d7da';
+      result.style.color = '#721c24';
+      result.style.border = '1px solid #f5c6cb';
+      result.innerHTML = `❌ <strong>Login failed:</strong><br>${error.message || 'Unknown error'}`;
+    }
+  } catch (error) {
+    const result = document.getElementById('step2-result');
+    result.style.display = 'block';
+    result.style.background = '#f8d7da';
+    result.style.color = '#721c24';
+    result.style.border = '1px solid #f5c6cb';
+    result.innerHTML = `❌ <strong>Network error:</strong><br>${error.message}`;
+  } finally {
+    // Reset button
+    button.innerHTML = originalText;
+    button.disabled = false;
+  }
 }
 
 function handleAuthorizeSwagger() {
-	if (!currentToken) {
-		alert('Please complete Step 2 first to get a JWT token');
-		return;
-	}
+  if (!currentToken) {
+    alert('Please complete Step 2 first to get a JWT token');
+    return;
+  }
 
-	const result = document.getElementById('step3-result');
+  const result = document.getElementById('step3-result');
 
-	try {
-		// Try different approaches to authorize Swagger UI
-		let authorized = false;
+  try {
+    // Try different approaches to authorize Swagger UI
+    let authorized = false;
 
-		// Approach 1: Try to access Swagger UI's window.ui object
-		if (window.ui?.authActions) {
-			try {
-				window.ui.authActions.authorize({
-					bearerAuth: {
-						name: 'bearerAuth',
-						schema: {
-							type: 'http',
-							scheme: 'bearer',
-						},
-						value: currentToken,
-					},
-				});
-				authorized = true;
-			} catch (_e) {}
-		}
+    // Approach 1: Try to access Swagger UI's window.ui object
+    if (window.ui?.authActions) {
+      try {
+        window.ui.authActions.authorize({
+          bearerAuth: {
+            name: 'bearerAuth',
+            schema: {
+              type: 'http',
+              scheme: 'bearer',
+            },
+            value: currentToken,
+          },
+        });
+        authorized = true;
+      } catch (_e) {}
+    }
 
-		// Approach 2: Try to find and automatically fill the authorize modal
-		if (!authorized) {
-			const authorizeBtn = document.querySelector(
-				'.btn.authorize, .authorization__btn',
-			);
-			if (authorizeBtn) {
-				authorizeBtn.click();
+    // Approach 2: Try to find and automatically fill the authorize modal
+    if (!authorized) {
+      const authorizeBtn = document.querySelector('.btn.authorize, .authorization__btn');
+      if (authorizeBtn) {
+        authorizeBtn.click();
 
-				setTimeout(() => {
-					const tokenInput = document.querySelector(
-						'input[placeholder*="Bearer"], input[name="bearerAuth"]',
-					);
-					if (tokenInput) {
-						tokenInput.value = `Bearer ${currentToken}`;
+        setTimeout(() => {
+          const tokenInput = document.querySelector('input[placeholder*="Bearer"], input[name="bearerAuth"]');
+          if (tokenInput) {
+            tokenInput.value = `Bearer ${currentToken}`;
 
-						// Try to find authorize button in modal
-						const modalAuthorizeBtn = document.querySelector(
-							'.auth-btn-wrapper .btn-done, .auth-container .authorize, .modal-ux .auth-btn-wrapper button',
-						);
-						if (modalAuthorizeBtn) {
-							modalAuthorizeBtn.click();
-							authorized = true;
-						}
-					}
-				}, 500);
-			}
-		}
+            // Try to find authorize button in modal
+            const modalAuthorizeBtn = document.querySelector(
+              '.auth-btn-wrapper .btn-done, .auth-container .authorize, .modal-ux .auth-btn-wrapper button',
+            );
+            if (modalAuthorizeBtn) {
+              modalAuthorizeBtn.click();
+              authorized = true;
+            }
+          }
+        }, 500);
+      }
+    }
 
-		// Show success message
-		result.style.display = 'block';
-		result.style.background = '#d4edda';
-		result.style.color = '#155724';
-		result.style.border = '1px solid #c3e6cb';
+    // Show success message
+    result.style.display = 'block';
+    result.style.background = '#d4edda';
+    result.style.color = '#155724';
+    result.style.border = '1px solid #c3e6cb';
 
-		if (authorized) {
-			result.innerHTML = `✅ <strong>Authorization successful!</strong><br>
+    if (authorized) {
+      result.innerHTML = `✅ <strong>Authorization successful!</strong><br>
         Swagger UI has been authorized with your JWT token.<br>
         🎉 <em>You can now access all protected endpoints!</em>`;
-		} else {
-			result.innerHTML = `⚠️ <strong>Manual authorization required:</strong><br>
+    } else {
+      result.innerHTML = `⚠️ <strong>Manual authorization required:</strong><br>
         1. Click the <strong>🔓 Authorize</strong> button at the top of this page<br>
         2. Enter: <code>Bearer ${currentToken.substring(0, 20)}...</code><br>
         3. Click <strong>Authorize</strong><br>
         <small>Your token is displayed above for easy copy-paste.</small>`;
-		}
-	} catch (_error) {
-		// Manual instruction fallback
-		result.style.display = 'block';
-		result.style.background = '#fff3cd';
-		result.style.color = '#856404';
-		result.style.border = '1px solid #ffeaa7';
-		result.innerHTML = `⚠️ <strong>Manual authorization required:</strong><br>
+    }
+  } catch (_error) {
+    // Manual instruction fallback
+    result.style.display = 'block';
+    result.style.background = '#fff3cd';
+    result.style.color = '#856404';
+    result.style.border = '1px solid #ffeaa7';
+    result.innerHTML = `⚠️ <strong>Manual authorization required:</strong><br>
       1. Click the <strong>🔓 Authorize</strong> button at the top of this page<br>
       2. Enter: <code>Bearer ${currentToken.substring(0, 20)}...</code><br>
       3. Click <strong>Authorize</strong><br>
       <small>Your full token is displayed above for easy copy-paste.</small>`;
-	}
+  }
 }
 
 // Make functions globally available for debugging

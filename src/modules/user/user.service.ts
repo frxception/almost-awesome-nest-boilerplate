@@ -57,11 +57,7 @@ export class UserService {
    */
   async findOne(findData: Partial<User>): Promise<User | null> {
     if (findData.id) {
-      const result = await this.drizzleService.database
-        .select()
-        .from(users)
-        .where(eq(users.id, findData.id))
-        .limit(1);
+      const result = await this.drizzleService.database.select().from(users).where(eq(users.id, findData.id)).limit(1);
 
       return result[0] ? this.toUserType(result[0]) : null;
     }
@@ -79,9 +75,7 @@ export class UserService {
     return null;
   }
 
-  async findByUsernameOrEmail(
-    options: Partial<{ username: string; email: string }>,
-  ): Promise<User | null> {
+  async findByUsernameOrEmail(options: Partial<{ username: string; email: string }>): Promise<User | null> {
     const conditions = [];
 
     if (options.email) {
@@ -105,10 +99,7 @@ export class UserService {
     return result[0] ? this.toUserType(result[0]) : null;
   }
 
-  async createUser(
-    userRegisterDto: UserRegisterDto,
-    file?: Reference<IFile>,
-  ): Promise<User> {
+  async createUser(userRegisterDto: UserRegisterDto, file?: Reference<IFile>): Promise<User> {
     if (file && !this.validatorService.isImage(file.mimetype)) {
       throw new FileNotImageException();
     }
@@ -146,19 +137,12 @@ export class UserService {
     return this.toUserType(user);
   }
 
-  async getUsers(
-    pageOptionsDto: UsersPageOptionsDto,
-  ): Promise<PageDto<UserDto>> {
+  async getUsers(pageOptionsDto: UsersPageOptionsDto): Promise<PageDto<UserDto>> {
     const { page, take } = pageOptionsDto;
     const offset = (page - 1) * take;
 
     const [items, totalCount] = await Promise.all([
-      this.drizzleService.database
-        .select()
-        .from(users)
-        .orderBy(desc(users.createdAt))
-        .limit(take)
-        .offset(offset),
+      this.drizzleService.database.select().from(users).orderBy(desc(users.createdAt)).limit(take).offset(offset),
       this.drizzleService.database
         .select({ count: sql`count(*)` })
         .from(users)
@@ -176,11 +160,7 @@ export class UserService {
   }
 
   async getUser(userId: Uuid): Promise<UserDto> {
-    const [user] = await this.drizzleService.database
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
+    const [user] = await this.drizzleService.database.select().from(users).where(eq(users.id, userId)).limit(1);
 
     if (!user) {
       throw new UserNotFoundException();
@@ -189,10 +169,7 @@ export class UserService {
     return new UserDto(this.toUserType(user));
   }
 
-  createSettings(
-    userId: Uuid,
-    createSettingsDto: CreateSettingsDto,
-  ): Promise<UserSettings> {
+  createSettings(userId: Uuid, createSettingsDto: CreateSettingsDto): Promise<UserSettings> {
     return this.commandBus.execute<CreateSettingsCommand, UserSettings>(
       new CreateSettingsCommand(userId, createSettingsDto),
     );

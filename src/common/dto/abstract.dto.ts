@@ -18,10 +18,7 @@ export class AbstractDto {
 
   translations?: AbstractTranslationDto[];
 
-  constructor(
-    entity: User | Post | PostTranslation,
-    options?: { excludeFields?: boolean },
-  ) {
+  constructor(entity: User | Post | PostTranslation, options?: { excludeFields?: boolean }) {
     if (!options?.excludeFields) {
       this.id = entity.id as Uuid;
       this.createdAt = entity.createdAt;
@@ -35,22 +32,15 @@ export class AbstractDto {
       if (languageCode && Array.isArray(entity.translations)) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const translationEntity = entity.translations.find(
-          (titleTranslation: PostTranslation) =>
-            titleTranslation.languageCode === languageCode,
+          (titleTranslation: PostTranslation) => titleTranslation.languageCode === languageCode,
         );
 
         if (translationEntity) {
           const fields: Record<string, string> = {};
 
-          for (const key of Object.keys(
-            translationEntity as unknown as object,
-          )) {
+          for (const key of Object.keys(translationEntity as unknown as object)) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const metadata = Reflect.getMetadata(
-              DYNAMIC_TRANSLATION_DECORATOR_KEY,
-              this,
-              key,
-            );
+            const metadata = Reflect.getMetadata(DYNAMIC_TRANSLATION_DECORATOR_KEY, this, key);
 
             if (metadata) {
               fields[key] = (translationEntity as never)[key];

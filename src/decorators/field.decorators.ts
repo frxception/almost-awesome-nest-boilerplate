@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/fixme-tag */
 import { applyDecorators } from '@nestjs/common';
 import type { ApiPropertyOptions } from '@nestjs/swagger';
 import { ApiProperty } from '@nestjs/swagger';
@@ -73,9 +74,7 @@ type IClassFieldOptions = IFieldOptions;
 type IBooleanFieldOptions = IFieldOptions;
 type IEnumFieldOptions = IFieldOptions;
 
-export function NumberField(
-  options: Omit<ApiPropertyOptions, 'type'> & INumberFieldOptions = {},
-): PropertyDecorator {
+export function NumberField(options: Omit<ApiPropertyOptions, 'type'> & INumberFieldOptions = {}): PropertyDecorator {
   const decorators = [Type(() => Number)];
 
   if (options.nullable) {
@@ -85,9 +84,7 @@ export function NumberField(
   }
 
   if (options.swagger !== false) {
-    decorators.push(
-      ApiProperty({ type: Number, ...(options as ApiPropertyOptions) }),
-    );
+    decorators.push(ApiProperty({ type: Number, ...(options as ApiPropertyOptions) }));
   }
 
   if (options.each) {
@@ -116,23 +113,13 @@ export function NumberField(
 }
 
 export function NumberFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type' | 'required'> &
-    INumberFieldOptions = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'required'> & INumberFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    NumberField({ required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), NumberField({ required: false, ...options }));
 }
 
-export function StringField(
-  options: Omit<ApiPropertyOptions, 'type'> & IStringFieldOptions = {},
-): PropertyDecorator {
-  const decorators = [
-    Type(() => String),
-    IsString({ each: options.each }),
-    Trim(options.trimNewLines ?? true),
-  ];
+export function StringField(options: Omit<ApiPropertyOptions, 'type'> & IStringFieldOptions = {}): PropertyDecorator {
+  const decorators = [Type(() => String), IsString({ each: options.each }), Trim(options.trimNewLines ?? true)];
 
   if (options.nullable) {
     decorators.push(IsNullable({ each: options.each }));
@@ -170,8 +157,7 @@ export function StringField(
 }
 
 export function TextAreaField(
-  options: Omit<ApiPropertyOptions, 'type'> &
-    Omit<IStringFieldOptions, 'trimNewLines'> = {},
+  options: Omit<ApiPropertyOptions, 'type'> & Omit<IStringFieldOptions, 'trimNewLines'> = {},
 ) {
   return StringField({
     ...options,
@@ -180,18 +166,13 @@ export function TextAreaField(
 }
 
 export function StringFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type' | 'required'> &
-    IStringFieldOptions = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'required'> & IStringFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    StringField({ required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), StringField({ required: false, ...options }));
 }
 
 export function TextAreaFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type' | 'required'> &
-    Omit<IStringFieldOptions, 'trimNewLines'> = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'required'> & Omit<IStringFieldOptions, 'trimNewLines'> = {},
 ) {
   return StringFieldOptional({
     ...options,
@@ -200,8 +181,7 @@ export function TextAreaFieldOptional(
 }
 
 export function PasswordField(
-  options: Omit<ApiPropertyOptions, 'type' | 'minLength'> &
-    IStringFieldOptions = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'minLength'> & IStringFieldOptions = {},
 ): PropertyDecorator {
   const decorators = [StringField({ ...options, minLength: 6 }), IsPassword()];
 
@@ -215,18 +195,12 @@ export function PasswordField(
 }
 
 export function PasswordFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type' | 'required' | 'minLength'> &
-    IStringFieldOptions = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'required' | 'minLength'> & IStringFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    PasswordField({ required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), PasswordField({ required: false, ...options }));
 }
 
-export function BooleanField(
-  options: Omit<ApiPropertyOptions, 'type'> & IBooleanFieldOptions = {},
-): PropertyDecorator {
+export function BooleanField(options: Omit<ApiPropertyOptions, 'type'> & IBooleanFieldOptions = {}): PropertyDecorator {
   const decorators = [ToBoolean(), IsBoolean()];
 
   if (options.nullable) {
@@ -236,27 +210,20 @@ export function BooleanField(
   }
 
   if (options.swagger !== false) {
-    decorators.push(
-      ApiProperty({ type: Boolean, ...(options as ApiPropertyOptions) }),
-    );
+    decorators.push(ApiProperty({ type: Boolean, ...(options as ApiPropertyOptions) }));
   }
 
   return applyDecorators(...decorators);
 }
 
 export function BooleanFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type' | 'required'> &
-    IBooleanFieldOptions = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'required'> & IBooleanFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    BooleanField({ required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), BooleanField({ required: false, ...options }));
 }
 
 export function TranslationsField(
-  options: RequireField<Omit<ApiPropertyOptions, 'isArray'>, 'type'> &
-    IFieldOptions,
+  options: RequireField<Omit<ApiPropertyOptions, 'isArray'>, 'type'> & IFieldOptions,
 ): PropertyDecorator {
   const decorators = [
     ArrayMinSize(supportedLanguageCount),
@@ -274,31 +241,20 @@ export function TranslationsField(
   }
 
   if (options.swagger !== false) {
-    decorators.push(
-      ApiProperty({ isArray: true, ...(options as ApiPropertyOptions) }),
-    );
+    decorators.push(ApiProperty({ isArray: true, ...(options as ApiPropertyOptions) }));
   }
 
   return applyDecorators(...decorators);
 }
 
 export function TranslationsFieldOptional(
-  options: RequireField<Omit<ApiPropertyOptions, 'isArray'>, 'type'> &
-    IFieldOptions,
+  options: RequireField<Omit<ApiPropertyOptions, 'isArray'>, 'type'> & IFieldOptions,
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    TranslationsField({ required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), TranslationsField({ required: false, ...options }));
 }
 
-export function TmpKeyField(
-  options: Omit<ApiPropertyOptions, 'type'> & IStringFieldOptions = {},
-): PropertyDecorator {
-  const decorators = [
-    StringField(options),
-    IsTemporaryKey({ each: options.each }),
-  ];
+export function TmpKeyField(options: Omit<ApiPropertyOptions, 'type'> & IStringFieldOptions = {}): PropertyDecorator {
+  const decorators = [StringField(options), IsTemporaryKey({ each: options.each })];
 
   if (options.nullable) {
     decorators.push(IsNullable());
@@ -320,20 +276,14 @@ export function TmpKeyField(
 }
 
 export function TmpKeyFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type' | 'required'> &
-    IStringFieldOptions = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'required'> & IStringFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    TmpKeyField({ required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), TmpKeyField({ required: false, ...options }));
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function EnumField<TEnum extends object>(
   getEnum: () => TEnum,
-  options: Omit<ApiPropertyOptions, 'type' | 'enum' | 'enumName' | 'isArray'> &
-    IEnumFieldOptions = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'enum' | 'enumName' | 'isArray'> & IEnumFieldOptions = {},
 ): PropertyDecorator {
   const enumValue = getEnum();
   const decorators = [IsEnum(enumValue, { each: options.each })];
@@ -349,25 +299,19 @@ export function EnumField<TEnum extends object>(
   }
 
   if (options.swagger !== false) {
-    decorators.push(
-      ApiEnumProperty(getEnum, { ...options, isArray: options.each }),
-    );
+    decorators.push(ApiEnumProperty(getEnum, { ...options, isArray: options.each }));
   }
 
   return applyDecorators(...decorators);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function ClassField<TClass extends Constructor>(
   getClass: () => TClass,
   options: Omit<ApiPropertyOptions, 'type'> & IClassFieldOptions = {},
 ): PropertyDecorator {
   const entity = getClass();
 
-  const decorators = [
-    Type(() => entity),
-    ValidateNested({ each: options.each }),
-  ];
+  const decorators = [Type(() => entity), ValidateNested({ each: options.each })];
 
   if (options.required !== false) {
     decorators.push(IsDefined());
@@ -395,37 +339,22 @@ export function ClassField<TClass extends Constructor>(
   return applyDecorators(...decorators);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function EnumFieldOptional<TEnum extends object>(
   getEnum: () => TEnum,
-  options: Omit<ApiPropertyOptions, 'type' | 'required' | 'enum' | 'enumName'> &
-    IEnumFieldOptions = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'required' | 'enum' | 'enumName'> & IEnumFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    EnumField(getEnum, { required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), EnumField(getEnum, { required: false, ...options }));
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function ClassFieldOptional<TClass extends Constructor>(
   getClass: () => TClass,
-  options: Omit<ApiPropertyOptions, 'type' | 'required'> &
-    IClassFieldOptions = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'required'> & IClassFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    ClassField(getClass, { required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), ClassField(getClass, { required: false, ...options }));
 }
 
-export function EmailField(
-  options: Omit<ApiPropertyOptions, 'type'> & IStringFieldOptions = {},
-): PropertyDecorator {
-  const decorators = [
-    IsEmail(),
-    StringField({ toLowerCase: true, ...options }),
-  ];
+export function EmailField(options: Omit<ApiPropertyOptions, 'type'> & IStringFieldOptions = {}): PropertyDecorator {
+  const decorators = [IsEmail(), StringField({ toLowerCase: true, ...options })];
 
   if (options.nullable) {
     decorators.push(IsNullable());
@@ -434,9 +363,7 @@ export function EmailField(
   }
 
   if (options.swagger !== false) {
-    decorators.push(
-      ApiProperty({ type: String, ...(options as ApiPropertyOptions) }),
-    );
+    decorators.push(ApiProperty({ type: String, ...(options as ApiPropertyOptions) }));
   }
 
   return applyDecorators(...decorators);
@@ -445,15 +372,10 @@ export function EmailField(
 export function EmailFieldOptional(
   options: Omit<ApiPropertyOptions, 'type'> & IStringFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    EmailField({ required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), EmailField({ required: false, ...options }));
 }
 
-export function PhoneField(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-): PropertyDecorator {
+export function PhoneField(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}): PropertyDecorator {
   const decorators = [IsPhoneNumber(), PhoneNumberSerializer()];
 
   if (options.nullable) {
@@ -463,9 +385,7 @@ export function PhoneField(
   }
 
   if (options.swagger !== false) {
-    decorators.push(
-      ApiProperty({ type: String, ...(options as ApiPropertyOptions) }),
-    );
+    decorators.push(ApiProperty({ type: String, ...(options as ApiPropertyOptions) }));
   }
 
   return applyDecorators(...decorators);
@@ -474,15 +394,11 @@ export function PhoneField(
 export function PhoneFieldOptional(
   options: Omit<ApiPropertyOptions, 'type' | 'required'> & IFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    PhoneField({ required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), PhoneField({ required: false, ...options }));
 }
 
 export function UUIDField(
-  options: Omit<ApiPropertyOptions, 'type' | 'format' | 'isArray'> &
-    IFieldOptions = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'format' | 'isArray'> & IFieldOptions = {},
 ): PropertyDecorator {
   const decorators = [Type(() => String), IsUUID('4', { each: options.each })];
 
@@ -504,18 +420,12 @@ export function UUIDField(
 }
 
 export function UUIDFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type' | 'required' | 'isArray'> &
-    IFieldOptions = {},
+  options: Omit<ApiPropertyOptions, 'type' | 'required' | 'isArray'> & IFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    UUIDField({ required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), UUIDField({ required: false, ...options }));
 }
 
-export function URLField(
-  options: Omit<ApiPropertyOptions, 'type'> & IStringFieldOptions = {},
-): PropertyDecorator {
+export function URLField(options: Omit<ApiPropertyOptions, 'type'> & IStringFieldOptions = {}): PropertyDecorator {
   const decorators = [StringField(options), IsUrl({}, { each: true })];
 
   if (options.nullable) {
@@ -530,15 +440,10 @@ export function URLField(
 export function URLFieldOptional(
   options: Omit<ApiPropertyOptions, 'type'> & IStringFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    URLField({ required: false, ...options }),
-  );
+  return applyDecorators(IsUndefinable(), URLField({ required: false, ...options }));
 }
 
-export function DateField(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-): PropertyDecorator {
+export function DateField(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}): PropertyDecorator {
   const decorators = [Type(() => Date), IsDate()];
 
   if (options.nullable) {
@@ -548,9 +453,7 @@ export function DateField(
   }
 
   if (options.swagger !== false) {
-    decorators.push(
-      ApiProperty({ type: Date, ...(options as ApiPropertyOptions) }),
-    );
+    decorators.push(ApiProperty({ type: Date, ...(options as ApiPropertyOptions) }));
   }
 
   return applyDecorators(...decorators);
@@ -559,15 +462,10 @@ export function DateField(
 export function DateFieldOptional(
   options: Omit<ApiPropertyOptions, 'type' | 'required'> & IFieldOptions = {},
 ): PropertyDecorator {
-  return applyDecorators(
-    IsUndefinable(),
-    DateField({ ...options, required: false }),
-  );
+  return applyDecorators(IsUndefinable(), DateField({ ...options, required: false }));
 }
 
-export function LinkedinField(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function LinkedinField(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   const decorators = [
     Expose({ groups: options.groups, name: options.name }),
     Type(() => String),
@@ -588,9 +486,7 @@ export function LinkedinField(
   return applyDecorators(...decorators);
 }
 
-export function FacebookField(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function FacebookField(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   const decorators = [
     Expose({ groups: options.groups, name: options.name }),
     Type(() => String),
@@ -608,9 +504,7 @@ export function FacebookField(
   return applyDecorators(...decorators);
 }
 
-export function InstagramField(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function InstagramField(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   const decorators = [
     Expose({ groups: options.groups, name: options.name }),
     Type(() => String),
@@ -628,9 +522,7 @@ export function InstagramField(
   return applyDecorators(...decorators);
 }
 
-export function TwitterField(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function TwitterField(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   const decorators = [
     Expose({ groups: options.groups, name: options.name }),
     Type(() => String),
@@ -648,18 +540,15 @@ export function TwitterField(
   return applyDecorators(...decorators);
 }
 
-export function WebsiteField(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function WebsiteField(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   // FIXME: replace trailing slash with a regex, .replace(/\/+$/, '')
   const decorators = [
     Expose({ groups: options.groups, name: options.name }),
     Type(() => String),
     ApiProperty({ type: String }),
     LinkCleanupTransform(),
-    Matches(
-      /^(https:\/\/)?(www\.)?[\w#%+.:=@~-]{1,256}\.[\d()A-Za-z]{1,6}([\w!#%&()+./:=?@~-]*)$/,
-    ),
+
+    Matches(/^(https:\/\/)?(www\.)?[\w#%+.:=@~-]{1,256}\.[\d()A-Za-z]{1,6}([\w!#%&()+./:=?@~-]*)$/),
   ];
 
   if (options.nullable) {
@@ -671,9 +560,7 @@ export function WebsiteField(
   return applyDecorators(...decorators);
 }
 
-export function YoutubeField(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function YoutubeField(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   // FIXME: replace trailing slash with a regex, .replace(/\/+$/, '')
   const decorators = [
     Expose({ groups: options.groups, name: options.name }),
@@ -692,38 +579,26 @@ export function YoutubeField(
   return applyDecorators(...decorators);
 }
 
-export function LinkedinFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function LinkedinFieldOptional(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   return applyDecorators(LinkedinField(options), IsUndefinable());
 }
 
-export function FacebookFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function FacebookFieldOptional(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   return applyDecorators(FacebookField(options), IsUndefinable());
 }
 
-export function InstagramFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function InstagramFieldOptional(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   return applyDecorators(InstagramField(options), IsUndefinable());
 }
 
-export function TwitterFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function TwitterFieldOptional(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   return applyDecorators(TwitterField(options), IsUndefinable());
 }
 
-export function WebsiteFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function WebsiteFieldOptional(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   return applyDecorators(WebsiteField(options), IsUndefinable());
 }
 
-export function YoutubeFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
-) {
+export function YoutubeFieldOptional(options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {}) {
   return applyDecorators(YoutubeField(options), IsUndefinable());
 }

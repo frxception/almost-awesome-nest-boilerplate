@@ -3,16 +3,8 @@
 import type { Type } from '@nestjs/common';
 import { applyDecorators, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiExtraModels,
-  getSchemaPath,
-} from '@nestjs/swagger';
-import type {
-  ReferenceObject,
-  SchemaObject,
-} from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+import { ApiBody, ApiConsumes, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
+import type { ReferenceObject, SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 import _ from 'lodash';
 
 import type { IApiFile } from '../interfaces/IApiFile.ts';
@@ -39,26 +31,14 @@ const ROUTE_ARGS_METADATA = '__routeArguments__';
 
 function explore(instance: object, propertyKey: string | symbol) {
   // biome-ignore lint/style/useConsistentArrayType: <explanation>
-  const types: Array<Type<unknown>> = Reflect.getMetadata(
-    PARAMTYPES_METADATA,
-    instance,
-    propertyKey,
-  );
-  const routeArgsMetadata =
-    Reflect.getMetadata(
-      ROUTE_ARGS_METADATA,
-      instance.constructor,
-      propertyKey,
-    ) ?? {};
+  const types: Array<Type<unknown>> = Reflect.getMetadata(PARAMTYPES_METADATA, instance, propertyKey);
+  const routeArgsMetadata = Reflect.getMetadata(ROUTE_ARGS_METADATA, instance.constructor, propertyKey) ?? {};
 
-  const parametersWithType = _.mapValues(
-    reverseObjectKeys(routeArgsMetadata),
-    (param) => ({
-      type: types[param.index],
-      name: param.data,
-      required: true,
-    }),
-  );
+  const parametersWithType = _.mapValues(reverseObjectKeys(routeArgsMetadata), (param) => ({
+    type: types[param.index],
+    name: param.data,
+    required: true,
+  }));
 
   for (const [key, value] of Object.entries(parametersWithType)) {
     const keyPair = key.split(':');
@@ -79,10 +59,7 @@ function RegisterModels(): MethodDecorator {
   };
 }
 
-function ApiFileDecorator(
-  files: IApiFile[] = [],
-  options: Partial<{ isRequired: boolean }> = {},
-): MethodDecorator {
+function ApiFileDecorator(files: IApiFile[] = [], options: Partial<{ isRequired: boolean }> = {}): MethodDecorator {
   return (target, propertyKey, descriptor: PropertyDescriptor) => {
     const { isRequired = false } = options;
     const fileSchema: SchemaObject = {
@@ -124,15 +101,10 @@ function ApiFileDecorator(
   };
 }
 
-export function ApiFile(
-  files: _.Many<IApiFile>,
-  options: Partial<{ isRequired: boolean }> = {},
-): MethodDecorator {
+export function ApiFile(files: _.Many<IApiFile>, options: Partial<{ isRequired: boolean }> = {}): MethodDecorator {
   const filesArray = _.castArray(files);
   const apiFileInterceptors = filesArray.map((file) =>
-    file.isArray
-      ? UseInterceptors(FilesInterceptor(file.name))
-      : UseInterceptors(FileInterceptor(file.name)),
+    file.isArray ? UseInterceptors(FilesInterceptor(file.name)) : UseInterceptors(FileInterceptor(file.name)),
   );
 
   return applyDecorators(

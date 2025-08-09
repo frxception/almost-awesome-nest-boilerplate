@@ -1,31 +1,12 @@
 /* eslint-disable simple-import-sort/imports */
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
-import {
-  ApiAcceptedResponse,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, Put, Query } from '@nestjs/common';
+import { ApiAcceptedResponse, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import type { PageDto } from '../../common/dto/page.dto.ts';
 import { RoleType } from '../../constants/role-type.ts';
 import { ApiPageResponse } from '../../decorators/api-page-response.decorator.ts';
 import { AuthUser } from '../../decorators/auth-user.decorator.ts';
-import {
-  ApiUUIDParam,
-  Auth,
-  UUIDParam,
-} from '../../decorators/http.decorators.ts';
+import { ApiUUIDParam, Auth, UUIDParam } from '../../decorators/http.decorators.ts';
 import { UseLanguageInterceptor } from '../../interceptors/language-interceptor.service.ts';
 import type { Uuid } from '../../types.ts';
 import type { User } from '../user/types/user.type.ts';
@@ -44,14 +25,8 @@ export class PostController {
   @Auth([RoleType.USER])
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: PostDto })
-  async createPost(
-    @Body() createPostDto: CreatePostDto,
-    @AuthUser() user: User,
-  ) {
-    const postEntity = await this.postService.createPost(
-      user.id as Uuid,
-      createPostDto,
-    );
+  async createPost(@Body() createPostDto: CreatePostDto, @AuthUser() user: User) {
+    const postEntity = await this.postService.createPost(user.id as Uuid, createPostDto);
 
     return new PostDto(postEntity);
   }
@@ -61,9 +36,7 @@ export class PostController {
   @Auth([RoleType.USER])
   @UseLanguageInterceptor()
   @ApiPageResponse({ type: PostDto })
-  async getPosts(
-    @Query() postsPageOptionsDto: PostPageOptionsDto,
-  ): Promise<PageDto<PostDto>> {
+  async getPosts(@Query() postsPageOptionsDto: PostPageOptionsDto): Promise<PageDto<PostDto>> {
     return this.postService.getAllPost(postsPageOptionsDto);
   }
 
@@ -82,10 +55,7 @@ export class PostController {
   @HttpCode(HttpStatus.OK)
   @ApiUUIDParam('id')
   @ApiOkResponse({ type: PostDto })
-  async updatePost(
-    @UUIDParam('id') id: Uuid,
-    @Body() updatePostDto: UpdatePostDto,
-  ): Promise<PostDto> {
+  async updatePost(@UUIDParam('id') id: Uuid, @Body() updatePostDto: UpdatePostDto): Promise<PostDto> {
     const post = await this.postService.updatePost(id, updatePostDto);
 
     return new PostDto(post);

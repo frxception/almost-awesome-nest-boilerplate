@@ -24,25 +24,18 @@ export class ApiConfigService {
     const num = Number(value);
 
     if (Number.isNaN(num)) {
-      throw new TypeError(
-        `Environment variable ${key} must be a number. Received: ${value}`,
-      );
+      throw new TypeError(`Environment variable ${key} must be a number. Received: ${value}`);
     }
 
     return num;
   }
 
-  private getDuration(
-    key: string,
-    format?: Parameters<typeof parse>[1],
-  ): number {
+  private getDuration(key: string, format?: Parameters<typeof parse>[1]): number {
     const value = this.getString(key);
     const duration = parse(value, format);
 
     if (duration === null) {
-      throw new Error(
-        `Environment variable ${key} must be a valid duration. Received: ${value}`,
-      );
+      throw new Error(`Environment variable ${key} must be a valid duration. Received: ${value}`);
     }
 
     return duration;
@@ -54,9 +47,7 @@ export class ApiConfigService {
     try {
       return Boolean(JSON.parse(value));
     } catch {
-      throw new Error(
-        `Environment variable ${key} must be a boolean. Received: ${value}`,
-      );
+      throw new Error(`Environment variable ${key} must be a boolean. Received: ${value}`);
     }
   }
 

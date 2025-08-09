@@ -14,8 +14,6 @@ export class HealthCheckerController {
   @Get()
   @HealthCheck()
   async check(): Promise<HealthCheckResult> {
-    return this.healthCheckService.check([
-      () => this.serviceIndicator.isHealthy('search-service-health'),
-    ]);
+    return this.healthCheckService.check([() => this.serviceIndicator.isHealthy('search-service-health')]);
   }
 }

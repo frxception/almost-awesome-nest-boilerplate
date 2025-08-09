@@ -23,27 +23,17 @@ export class PostService {
   ) {}
 
   createPost(userId: Uuid, createPostDto: CreatePostDto): Promise<Post> {
-    return this.commandBus.execute<CreatePostCommand, Post>(
-      new CreatePostCommand(userId, createPostDto),
-    );
+    return this.commandBus.execute<CreatePostCommand, Post>(new CreatePostCommand(userId, createPostDto));
   }
 
-  async getAllPost(
-    postPageOptionsDto: PostPageOptionsDto,
-  ): Promise<PageDto<PostDto>> {
+  async getAllPost(postPageOptionsDto: PostPageOptionsDto): Promise<PageDto<PostDto>> {
     const { page, take, order } = postPageOptionsDto;
     const offset = (page - 1) * take;
 
-    const orderBy =
-      order === Order.ASC ? asc(posts.createdAt) : desc(posts.createdAt);
+    const orderBy = order === Order.ASC ? asc(posts.createdAt) : desc(posts.createdAt);
 
     const [items, totalCount] = await Promise.all([
-      this.drizzleService.database
-        .select()
-        .from(posts)
-        .orderBy(orderBy)
-        .limit(take)
-        .offset(offset),
+      this.drizzleService.database.select().from(posts).orderBy(orderBy).limit(take).offset(offset),
       this.drizzleService.database
         .select({ count: sql`count(*)` })
         .from(posts)
@@ -66,11 +56,7 @@ export class PostService {
   }
 
   async getSinglePost(id: Uuid): Promise<Post> {
-    const [post] = await this.drizzleService.database
-      .select()
-      .from(posts)
-      .where(eq(posts.id, id))
-      .limit(1);
+    const [post] = await this.drizzleService.database.select().from(posts).where(eq(posts.id, id)).limit(1);
 
     if (!post) {
       throw new PostNotFoundException();
@@ -80,11 +66,7 @@ export class PostService {
   }
 
   async updatePost(id: Uuid, _updatePostDto: UpdatePostDto): Promise<Post> {
-    const [post] = await this.drizzleService.database
-      .select()
-      .from(posts)
-      .where(eq(posts.id, id))
-      .limit(1);
+    const [post] = await this.drizzleService.database.select().from(posts).where(eq(posts.id, id)).limit(1);
 
     if (!post) {
       throw new PostNotFoundException();
@@ -98,11 +80,7 @@ export class PostService {
   }
 
   async deletePost(id: Uuid): Promise<void> {
-    const [post] = await this.drizzleService.database
-      .select()
-      .from(posts)
-      .where(eq(posts.id, id))
-      .limit(1);
+    const [post] = await this.drizzleService.database.select().from(posts).where(eq(posts.id, id)).limit(1);
 
     if (!post) {
       throw new PostNotFoundException();

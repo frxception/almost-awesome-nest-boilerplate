@@ -54,7 +54,5 @@ Now you can access all protected endpoints! 🎉`,
     },
   });
 
-  console.info(
-    `Documentation: http://localhost:${process.env.PORT}/documentation`,
-  );
+  console.info(`Documentation: http://localhost:${process.env.PORT}/documentation`);
 }
