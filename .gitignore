@@ -87,6 +87,10 @@ db-data
 .history
 .swc/
 
+.cl*
+./cl*
+.cu*
+
 # VuePress default temp directory
 .vuepress/.temp
 # VuePress default cache directory
