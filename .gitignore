@@ -90,6 +90,7 @@ db-data
 .cl*
 ./cl*
 .cu*
+cl*
 
 # VuePress default temp directory
 .vuepress/.temp
